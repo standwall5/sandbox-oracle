@@ -34,7 +34,7 @@
 7. Company contact  
 8. Job posts
 
-![][image1]  
+![Diagram Job Application (11)](https://github.com/user-attachments/assets/667ca38e-192f-4b4b-9888-02bdfe73c107) 
 **Database Schema**
 
 **Key concepts**  
@@ -55,13 +55,8 @@ New user created (while using SYS as SYSDBA role; admin privileges). Username is
 
 When trying to connect, if using SYS, Oracle requires you to login as SYSDBA, which does not seem possible. Instead, and the better way is to create a new user and grant it specific permissions.
 
-The schema used and where the tables are contained is the C\#\#STUDENT\_PROJECT schema. Tables within this schema are called with: C\#\#STUDENT\_PROJECT.table\_name  
-![][image2]
-
-![Diagram Job Application (11)](https://github.com/user-attachments/assets/667ca38e-192f-4b4b-9888-02bdfe73c107)
-
+The schema used and where the tables are contained is the C\#\#STUDENT\_PROJECT schema. Tables within this schema are called with: C\#\#STUDENT\_PROJECT.table\_name
 ![javaw_p5C4Tfg5a4](https://github.com/user-attachments/assets/75539646-0ebe-4379-9086-7ee5900c3f39)
-
 
 
 <h3>This contains the following technologies:</h3>
