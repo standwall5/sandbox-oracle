@@ -31,6 +31,8 @@ public class PostDAO {
 	private static final String INSERT_INTO_RESUME = "INSERT INTO Resume (address, workhist, educhist, skills, resdesc, userID) VALUES" + "(?, ?, ?, ?, ?, ?)";
 	private static final String UPDATE_RESUME = "UPDATE Resume SET address = ?, workhist = ?, educhist = ?, skills = ?, resdesc = ? WHERE userID = ?";
 	private static final String INSERT_INTO_APPLICATIONS = "INSERT INTO Applications (postid, userid) VALUES (?, ?)";
+	private static final String SELECT_ALL_APPLICATIONS = "SELECT * from applications where userid = ? and postid = ?";
+	private static final String UPDATE_USER_EMPID = "UPDATE User set EmployeeID = ? where id = ?";
 	
 //	End of queries
 
@@ -315,12 +317,12 @@ public class PostDAO {
 	}
 
 	
-//	Check if you have applied for this? (not sure what it is for yet)
+//	Used by companies, checking all applicants
 	public int checkApply(int postId, int userId) throws SQLException {
 		int exists = 0;
 		try (Connection conn = getConnection();
 				PreparedStatement statement = conn
-						.prepareStatement("SELECT * from applications where userid = ? and postid = ?")) {
+						.prepareStatement(SELECT_ALL_APPLICATIONS)) {
 			statement.setInt(1, userId);
 			statement.setInt(2, postId);
 
@@ -344,7 +346,7 @@ public class PostDAO {
 //	using the ${name} thing (only present in JSP)
 	public void acceptApplicant(int id) throws SQLException {
 		try (Connection conn = getConnection();
-				PreparedStatement statement = conn.prepareStatement("SELECT * FROM Company where id = ?")) {
+				PreparedStatement statement = conn.prepareStatement(SELECT_COMPANY_BY_ID)) {
 			statement.setInt(1, UserLogin.getCompanyID());
 
 			ResultSet rs = statement.executeQuery(); // Get every data of that company
@@ -353,7 +355,7 @@ public class PostDAO {
 				int empId = rs.getInt("EmpID");
 				
 //				Sets the applicant's empID (in database) to the unique empID of that company
-				PreparedStatement statement2 = conn.prepareStatement("UPDATE User set EmployeeID = ? where id = ?");
+				PreparedStatement statement2 = conn.prepareStatement(UPDATE_USER_EMPID);
 				statement2.setInt(1, empId);
 				statement2.setInt(2, id);
 
