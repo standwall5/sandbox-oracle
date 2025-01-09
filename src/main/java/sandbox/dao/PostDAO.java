@@ -15,17 +15,23 @@ import sandbox.model.UserLogin;
 public class PostDAO {
 	
 //	Database Credentials
-	private static final String jdbcURL = "jdbc:oracle:thin:@localhost:1521/FREEPDB1";
-	private static final String jdbcUsername = "oracle123";
-	private static final String jdbcPassword = "mypassword1";
+	private static final String jdbcURL = "jdbc:oracle:thin:@//\" + \"localhost\" + \":\" + \"1521\" + \"/\" + \"FREEPDB1";
+	private static final String jdbcUsername = "sandbox";
+	private static final String jdbcPassword = "sandboxUser";
 //	End of db cred
 	
 //	SQL queries to be used
 //	Probably created to tie into prepared statements; preventing SQL injections
 	private static final String SELECT_ALL_JOBS = "select * from posts";
-	private static final String SELECT_ALL_JOBS_COMPANY = "select * from posts where companyid = ?";
+	private static final String SELECT_ALL_JOBS_COMPANY = "select * from job_posts where companyid = ?";
 	private static final String SELECT_JOB_BY_ID = "select * from posts where id = ?";
 	private static final String DELETE_JOBS_SQL = "delete from posts where id = ?";
+	private static final String SELECT_USER_BY_ID = "select * from Users where id = ?";
+	private static final String SELECT_COMPANY_BY_ID = "select * from Company where id = ?";
+	private static final String INSERT_INTO_RESUME = "INSERT INTO Resume (address, workhist, educhist, skills, resdesc, userID) VALUES" + "(?, ?, ?, ?, ?, ?)";
+	private static final String UPDATE_RESUME = "UPDATE Resume SET address = ?, workhist = ?, educhist = ?, skills = ?, resdesc = ? WHERE userID = ?";
+	private static final String INSERT_INTO_APPLICATIONS = "INSERT INTO Applications (postid, userid) VALUES (?, ?)";
+	
 //	End of queries
 
 	
@@ -34,12 +40,8 @@ public class PostDAO {
 	protected Connection getConnection() {
 		Connection conn = null;
 		try {
-			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-			conn = DriverManager.getConnection(jdbcURL);
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-
 			e.printStackTrace();
 		}
 		return conn;
@@ -55,7 +57,7 @@ public class PostDAO {
 		ResultSet rs = null; // Type ResultSet variable name
 
 		try (Connection conn = getConnection();
-				PreparedStatement preparedStatement = conn.prepareStatement("select * from User where id = ?");) {
+				PreparedStatement preparedStatement = conn.prepareStatement(SELECT_USER_BY_ID);) {
 
 			preparedStatement.setInt(1, userId); // Replace the ? in the query above to the given userId
 
@@ -95,7 +97,7 @@ public class PostDAO {
 		ResultSet rs = null;
 
 		try (Connection conn = getConnection();
-				PreparedStatement preparedStatement = conn.prepareStatement("select * from Company where id = ?");) {
+				PreparedStatement preparedStatement = conn.prepareStatement(SELECT_COMPANY_BY_ID);) {
 
 			preparedStatement.setInt(1, userId);
 
@@ -123,9 +125,7 @@ public class PostDAO {
 	public int insertResume(User resume) { // So resume which is a User type variable
 		int rowCount = 0;
 		try (Connection conn = getConnection();
-				PreparedStatement preparedStatement = conn.prepareStatement(
-						"INSERT INTO Resume (address, workhist, educhist, skills, resdesc, userID) VALUES"
-								+ "(?, ?, ?, ?, ?, ?)");) {
+				PreparedStatement preparedStatement = conn.prepareStatement(INSERT_INTO_RESUME);) {
 //			From that user object, we are able to retrieve information without putting much in the parameters
 			preparedStatement.setString(1, resume.getAddress());
 			preparedStatement.setString(2, resume.getWorkhist());
@@ -146,9 +146,8 @@ public class PostDAO {
 //	Update a user's resume
 	public boolean updateResume(User resume) {
 		boolean rowCount = false;
-		String sql = "UPDATE Resume SET address = ?, workhist = ?, educhist = ?, skills = ?, resdesc = ? WHERE userID = ?";
 
-		try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+		try (Connection conn = getConnection(); PreparedStatement preparedStatement = conn.prepareStatement(UPDATE_RESUME)) {
 
 			preparedStatement.setString(1, resume.getAddress());
 			preparedStatement.setString(2, resume.getWorkhist());
@@ -298,7 +297,7 @@ public class PostDAO {
 	public void applyWork(int postId, int userId) throws SQLException {
 		try (Connection conn = getConnection();
 				PreparedStatement statement = conn
-						.prepareStatement("INSERT INTO Applications (postid, userid) VALUES (?, ?)")) {
+						.prepareStatement(INSERT_INTO_APPLICATIONS)) {
 
 			statement.setInt(1, postId);
 			statement.setInt(2, userId);

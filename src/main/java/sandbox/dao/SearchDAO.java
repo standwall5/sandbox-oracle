@@ -13,14 +13,15 @@ import sandbox.model.JobPosts;
 import sandbox.model.User;
 
 public class SearchDAO {
-	private static final String jdbcURL = "jdbc:ucanaccess://C:\\Users\\johnp\\Documents\\IM Finals.accdb";
+	private static final String jdbcURL = "jdbc:oracle:thin:@//\" + \"localhost\" + \":\" + \"1521\" + \"/\" + \"FREEPDB1";
+	private static final String jdbcUsername = "sandbox";
+	private static final String jdbcPassword = "sandboxUser";
 
 	protected Connection getConnection() {
 		Connection conn = null;
 		try {
-			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-			conn = DriverManager.getConnection(jdbcURL);
-		} catch (SQLException | ClassNotFoundException e) {
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return conn;

@@ -12,19 +12,15 @@ import sandbox.model.Company;
 import sandbox.model.User;
 
 public class UserDAO {
-	private static final String jdbcURL = "jdbc:oracle:thin:@" + "localhost" + ":" + "1521" + "/" + "FREE";
-	private static final String username = "SYS"; // Replace with your Oracle username
-	private static final String password = "mypassword1";
+	private static final String jdbcURL = "jdbc:oracle:thin:@//\" + \"localhost\" + \":\" + \"1521\" + \"/\" + \"FREEPDB1";
+	private static final String jdbcUsername = "sandbox";
+	private static final String jdbcPassword = "sandboxUser";
 
 	protected Connection getConnection() {
 		Connection conn = null;
 		try {
-			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-			conn = DriverManager.getConnection(jdbcURL, username, password);
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
 		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-
 			e.printStackTrace();
 		}
 		return conn;
