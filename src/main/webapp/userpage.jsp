@@ -109,7 +109,7 @@
 <div class="container dflex justify-content-center align-items-center">
     <div class="mb-5">
     <div class="profile-header">
-        <img src="${user.icon}" class="icon" alt="Profile Picture">
+        <img class="profile-pic" src='getImageResult?id=${userNow}' class="icon" alt="Profile Picture">
         <h1><img src="https://i.imgur.com/uQNIcJO.png" width="300px;"/></h1>
     </div>
     
@@ -120,10 +120,52 @@
                     <div>
                         <h3>${user.fname} ${user.lname}</h3>
 						<p>${user.district}, ${user.barangay}</p>
+						<p>${user.email}</p>
+						<p>${user.cnumber}</p>
                     </div>
-                    <button class="btn btn-outline-secondary">Edit Profile</button>
+					<c:if test="${sessionScope.mode == 0 && sessionScope.userId == userNow}">
+                    <a href='updateProfileForm?id=${sessionScope.userId}';" class="btn btn-outline-secondary">Edit Profile</a>
+					</c:if>
                 </div>
             </div>
+
+					
+						
+	            		<div class="profile-section bg-white p-3 raounded shadow-sm mb-3">
+	                        <h5>Work Experience</h5>
+	                        <c:if test="${not empty workHist}">
+		                        <c:forEach var="work" items="${workHist}">
+		                        	<p>${work.jobTitle} | ${work.companyName} | ${work.startYear} – ${work.endYear}</p>
+		                        </c:forEach>
+	                        </c:if>
+	                        <c:if test="${empty workHist}">
+	                        	<p>No work history found.</p>
+	                        </c:if>
+	                    </div>
+	                   
+                  
+                    <div class="profile-section bg-white p-3 raounded shadow-sm mb-3">
+                        <h5>Educational Attainment</h5>
+                        <c:if test="${not empty educ}">
+	                        <c:forEach var="educ" items="${educ}">
+	                        	<p>${educ.degree} | ${educ.school_name} | ${educ.start_year} – ${educ.end_year}</p>
+	                        </c:forEach>
+                        </c:if>
+                        <c:if test="${empty educ}">
+	                        	<p>No education history found.</p>
+	                        </c:if>
+                    </div>
+                    <div class="profile-section bg-white p-3 raounded shadow-sm mb-3">
+                        <h5>Skills</h5>
+                        <c:if test="${not empty skill}">
+	                        <c:forEach var="skill" items="${skill}">
+	                        	<p>${skill.name}</p>
+	                        </c:forEach>
+                        </c:if>
+                        <c:if test="${empty skill}">
+	                        	<p>No skills retrieved.</p>
+	                    </c:if>
+                    </div>
             
            
         </div>

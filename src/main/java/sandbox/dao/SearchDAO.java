@@ -8,19 +8,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.model.Company;
 import sandbox.model.JobPosts;
 import sandbox.model.User;
 
 public class SearchDAO {
-	private static final String jdbcURL = "jdbc:oracle:thin:@//\" + \"localhost\" + \":\" + \"1521\" + \"/\" + \"FREEPDB1";
+	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
 	private static final String jdbcUsername = "sandbox";
 	private static final String jdbcPassword = "sandboxUser";
 
-	protected Connection getConnection() {
+	protected Connection getConnection() throws SQLException{
+		OracleDataSource ods = new OracleDataSource();
 		Connection conn = null;
 		try {
-			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+			ods.setURL(jdbcURL);
+			ods.setUser(jdbcUsername);
+			ods.setPassword(jdbcPassword);
+//			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+			conn = ods.getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -29,7 +35,11 @@ public class SearchDAO {
 
 	public List<User> selectAllUsersSearch(String query) throws SQLException {
 		List<User> users = new ArrayList<>();
-		String searchQuery = "SELECT * FROM User WHERE firstname LIKE ? OR lastname LIKE ? OR district LIKE ? OR barangay LIKE ? OR bio LIKE ?";
+		String searchQuery = "SELECT * FROM users \r\n"
+				+ "WHERE LOWER(first_name) LIKE LOWER(?) \r\n"
+				+ "   OR LOWER(last_name) LIKE LOWER(?) \r\n"
+				+ "   OR LOWER(description) LIKE LOWER(?)\r\n"
+				+ ""; //  OR district LIKE ? OR barangay LIKE ?
 
 		try (Connection conn = getConnection();
 				PreparedStatement preparedStatement = conn.prepareStatement(searchQuery)) {
@@ -46,21 +56,32 @@ public class SearchDAO {
 			preparedStatement.setString(1, "%" + query + "%");
 			preparedStatement.setString(2, "%" + query + "%");
 			preparedStatement.setString(3, "%" + query + "%");
-			preparedStatement.setString(4, "%" + query + "%");
-			preparedStatement.setString(5, "%" + query + "%");
 
 			ResultSet rs = preparedStatement.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				String fname = rs.getString("firstname");
-				String lname = rs.getString("lastname");
-				String district = rs.getString("district");
-				String barangay = rs.getString("barangay");
-				String bio = rs.getString("bio");
+				int id = rs.getInt("user_id");
+				int contactId = rs.getInt("contact_id");
+				String fname = rs.getString("first_name");
+				String lname = rs.getString("last_name");
+				String bio = rs.getString("description");
 				String icon = rs.getString("icon");
+				String district = null;
+				String barangay = null;
+				String email = null;
+				
+				try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM contact where contact_id = ?")) {
+					stmt.setInt(1, contactId);
+					ResultSet rs2 = stmt.executeQuery();
+					
+					if (rs2.next()) {
+						district = rs2.getString("district");
+						barangay = rs2.getString("barangay");
+						email = rs2.getString("email");
+					}
+				}
 
-				users.add(new User(id, fname, lname, district, barangay, bio, icon));
+				users.add(new User(id, fname, lname, bio, icon, district, barangay, email));
 			}
 		}
 		return users;
@@ -70,26 +91,38 @@ public class SearchDAO {
 //	Searching all companies, has its own section
 	public List<Company> selectAllCompaniesSearch(String query) throws SQLException {
 		List<Company> companies = new ArrayList<>();
-		String searchQuery = "SELECT * FROM Company WHERE companyname LIKE ? OR description LIKE ? OR address LIKE ?";
+		String searchQuery = "SELECT * FROM Company WHERE LOWER(company_name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?)"; // OR address LIKE ? add this
 
 		try (Connection conn = getConnection();
 				PreparedStatement preparedStatement = conn.prepareStatement(searchQuery)) {
 
 			preparedStatement.setString(1, "%" + query + "%");
 			preparedStatement.setString(2, "%" + query + "%");
-			preparedStatement.setString(3, "%" + query + "%");
 
 			ResultSet rs = preparedStatement.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				String name = rs.getString("companyname");
+				int id = rs.getInt("company_id");
+				int contactId = rs.getInt("contact_id");
+				String name = rs.getString("company_name");
 				String desc = rs.getString("description");
-				String icon = rs.getString("companyimage");
-				String address = rs.getString("address");
-
-				companies.add(new Company(id, name, desc, icon, address));
+				String icon = rs.getString("company_icon"); // change all jsp references to images
+				String address = null;
+				String province = null;
+				String city = null;
+				try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company_contact WHERE contact_id = ?")) {
+					stmt.setInt(1, contactId);
+					ResultSet rs2 = stmt.executeQuery();
+					if (rs2.next()) {
+						address = rs2.getString("specific_address");
+						province = rs2.getString("province");
+						city = rs2.getString("city");
+					}
+				}
+				
+				companies.add(new Company(id, name, desc, icon, address, city, province));
 			}
+			
 		}
 		return companies;
 	}
@@ -98,7 +131,7 @@ public class SearchDAO {
 //	All jobs (has its own section)
 	public List<JobPosts> selectAllJobsSearch(String query) {
 		List<JobPosts> jobs = new ArrayList<>();
-		String searchQuery = "SELECT * FROM posts WHERE title LIKE ? OR description LIKE ? OR address LIKE ? OR postdate LIKE ?";
+		String searchQuery = "SELECT * FROM job_posts WHERE LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?) OR LOWER(address) LIKE LOWER(?) OR LOWER(post_date) LIKE LOWER(?)";
 
 		try (Connection conn = getConnection();
 				PreparedStatement preparedStatement = conn.prepareStatement(searchQuery)) {
@@ -111,21 +144,21 @@ public class SearchDAO {
 			ResultSet rs = preparedStatement.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				int companyId = rs.getInt("companyid");
+				int id = rs.getInt("post_id");
+				int companyId = rs.getInt("company_id");
 				String title = rs.getString("title");
 				String desc = rs.getString("description");
 				String address = rs.getString("address");
 				String category = rs.getString("category");
-				String postDate = rs.getString("postDate");
+				String postDate = rs.getString("post_date");
 
-				String companyQuery = "SELECT companyname FROM Company WHERE id = ?";
+				String companyQuery = "SELECT company_name FROM Company WHERE company_id = ?";
 				try (PreparedStatement companyStatement = conn.prepareStatement(companyQuery)) {
 					companyStatement.setInt(1, companyId);
 					ResultSet companyResult = companyStatement.executeQuery();
 
 					if (companyResult.next()) {
-						String companyName = companyResult.getString("companyname");
+						String companyName = companyResult.getString("company_name");
 						jobs.add(
 								new JobPosts(id, companyName, title, desc, address, category, postDate, "placeholder"));
 					}

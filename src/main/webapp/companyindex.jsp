@@ -163,7 +163,7 @@
         <img src="https://i.imgur.com/uQNIcJO.png" class="logo"/>
         <br>
         <a href="loginCompany.jsp" class="btn btn-1 btn-lg w-auto fs-5 fw-bold">Login to Company</button></a>
-        <p class="textbtn fs-6">Start work now!</p>
+        <p class="textbtn fs-6">Start hiring now!</p>
         <br>
         <a href="regCompanyCopy.jsp" class="btn btn-1 btn-lg w-auto fs-5 fw-bold">Register Company</button></a>
         <p class="textbtn fs-6">Register your company on our website.</p>

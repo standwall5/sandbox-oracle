@@ -14,5 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="C:/Users/johnp/Downloads/UCanAccess-5.0.1.bin/UCanAccess-5.0.1.bin/lib/commons-lang3-3.8.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/johnp/Downloads/UCanAccess-5.0.1.bin/UCanAccess-5.0.1.bin/lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/johnp/Downloads/ojdbc17-23.6.0.24.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/johnp/Downloads/ojdbc11-23.6.0.24.10.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

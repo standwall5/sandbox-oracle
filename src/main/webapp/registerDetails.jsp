@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" rel="stylesheet">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
 
     body {
         background-image: url('https://i.imgur.com/as1eDDA.png');
@@ -110,25 +110,30 @@
         <form action="registerInfo" method="post">
             <div class="input-group mb-3 form-group mt-4">
               <input type="number" class="form-control form-control-lg bg-light fs-6 rounded-pill" placeholder="Age"
-						name="age" required="required">
+					name="age" required>
             </div>
             <div class="input-group mb-3 form-group">
               <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" placeholder="Birth Date"
-						name="bday" required="required" onfocus="(this.type='date')" onblur="(this.type='text')">
+					name="bday" required onfocus="(this.type='date')" onblur="(this.type='text')">
             </div>
-            <div class="input-group mb-3 form-group d-flex justify-content-center">
-              <input type="tel" id="phone" class="form-control form-control-lg bg-light fs-6 phone-input rounded-pill"
-              name="cnumber" required>
+            
+            <div class="input-group mb-3 form-group">
+              <input type="text" id="phone" class="form-control form-control-lg bg-light fs-6 phone-input rounded-pill"
+              name="cnumber" placeholder="Contact Number" required>
+            </div>
+            <div class="input-group mb-3 form-group">
+              <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" placeholder="House Number, Street, Subdivision, Etc."
+              name="specific_address" required>
             </div>
               <div class="input-group mb-3 form-group">
-               <select class="form-select form-select-lg bg-light fs-6 rounded-pill" id="categorySelect" name="district" aria-label="Default select example">
+               <select class="form-select form-select-lg bg-light fs-6 rounded-pill" id="categorySelect" name="district" aria-label="Default select example" required>
                     <option hidden disabled>Select district</option>
                     <option value="District I">District I</option>
                     <option value="District II">District II</option>
                   </select>
                  </div>
                  <div class="input-group mb-3 form-group">
-                        <select class="form-select form-select-lg bg-light fs-6 rounded-pill" id="subcategorySelect" name="barangay">
+                        <select class="form-select form-select-lg bg-light fs-6 rounded-pill" id="subcategorySelect" name="barangay" required>
                         	<option selected hidden disabled>Select Barangay</option>
                         </select>
                     </div>
@@ -149,7 +154,7 @@
     		</div>
 
         <div class="mb-5">
-            <button type="submit" class="btn btn-1 fw-bold">Submit</button>
+            <button type="submit" class="btn btn-1 fw-bold">Next</button>
             </div>
         </div>
         </form>
@@ -158,28 +163,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
-    <!-- intl-tel-input JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-    <!-- intl-tel-input Utils JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        	const input = document.querySelector("#phone");
-        	window.intlTelInput(input, {
-        	  initialCountry: "auto",
-        	  geoIpLookup: callback => {
-        	    fetch("https://ipapi.co/json")
-        	      .then(res => res.json())
-        	      .then(data => callback(data.country_code))
-        	      .catch(() => callback("us"));
-        	  },
-        	  utilsScript: "/intl-tel-input/js/utils.js?1716383386062"
-        	});
-        });
-    </script>
-    
    <script>
     $(document).ready(function() {
         var categoryOptions = {

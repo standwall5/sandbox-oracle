@@ -13,13 +13,39 @@ public class Company {
 	private String desc;
 	private String icon;
 	private String address;
+	private String province;
+	private String city;
 	
-	public Company (int id, String name, String desc, String icon, String address){
+	public Company (int id, String name, String desc, String icon, String address, String city, String province){
 		this.id = id;
 		this.name = name;
 		this.desc = desc;
 		this.icon = icon;
 		this.address = address;
+		this.city = city;
+		this.province = province;
+	}
+
+//	public Company(String name2, String desc2, String icon2, String address2, String city2, String province2) {
+//		// TODO Auto-generated constructor stub
+//	}
+	
+	
+	
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 	public int getId() {

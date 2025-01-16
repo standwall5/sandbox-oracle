@@ -120,7 +120,7 @@
     
     <div class="row">
         <div class="col-md-12">
-        <c:if test="${mode == 0}">
+        <c:if test="${sessionScope.mode == 0}">
 			<c:forEach var="work" items="${listJob}">
 			<c:if test="${work.id != 1}">
 			
@@ -135,10 +135,10 @@
             </c:forEach>
             </c:if>
       
-            <c:if test="${mode == 1}">
+            <c:if test="${sessionScope.mode == 1}">
 			<c:forEach var="work" items="${listJobCompany}">
-			
-			<c:if test="${work.id != 1}">
+
+			<!-- <c:if test="${work.id != 1}"> -->
 			
             <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
                 <h3>${work.title}</h3>
@@ -147,7 +147,7 @@
                 <p>Location: ${work.address}</p>
                 <a href="showJobDetails?id=<c:out value='${work.id}'/>" class="btn btn-1">View Details</a>
             </div>
-            </c:if>
+            <!-- </c:if> -->
             </c:forEach>
             </c:if>
         </div>

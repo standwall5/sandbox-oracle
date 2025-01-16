@@ -115,10 +115,10 @@
     <div class="row">
             <div class="bg-white p-3 rounded shadow-sm mb-3">
                 <h3>Job Listings</h3>
-                <c:if test="${mode == 0}">
+                <c:if test="${mode == 0}"> <!-- Mode 0 means user mode -->
                 <a href="joblist" class="btn btn-1">View Job Listings</a>
                 </c:if>
-                <c:if test="${mode == 1}">
+                <c:if test="${mode == 1}"> <!-- Mode 1 means company mode -->
                 <a href="joblistCompany" class="btn btn-1">View Job Listings</a>
                 </c:if>
             </div>

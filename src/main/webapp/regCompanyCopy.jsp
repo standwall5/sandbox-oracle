@@ -104,6 +104,36 @@
     .iti{
     	width: 100%;
     }
+    
+    .uploadPic {
+            display: inline-block;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .uploadPic svg {
+        	fill: grey;
+            transition: .2s;
+            width: 60px;
+            border: 3px solid transparent;
+            border-radius: 30%;
+            transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .uploadPic svg:hover {
+        	fill: black;
+            transform: scale(1.1);
+            border-color: lightgreen;
+        }
+    
+    #picture {
+    	display: none;
+    }
+    
+     }
+        #fileChange span {
+        	color: #3cb474;
+     }
     </style>
     </head>
     <body>
@@ -126,13 +156,13 @@
     <div class="p-4 rounded-5 shadow-sm row mt-4" style="background-color: #d5ffdd;">
     <div>
         <div class="col-md-8 offset-md-2">
-            <form action="RegisterCompany" method="post">
+            <form action="RegisterCompany" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="companyTitle" class="form-label">Title of Company</label>
+                    <label for="title" class="form-label">Title of Company</label>
                     <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="title" required>
                 </div>
                 <div class="mb-3">
-                    <label for="companyTitle" class="form-label">E-mail</label>
+                    <label for="email" class="form-label">E-mail</label>
                     <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="email" required>
                 </div>
                 <div class="mb-3">
@@ -145,13 +175,26 @@
               name="cnumber" required>
                 </div>
                 <div class="mb-3">
-                    <label for="companyAddress" class="form-label">Address</label>
-                    <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="address" required>
+                    <label for="companyAddress" class="form-label">Specific Address</label>
+                    <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="specific_address" required>
+                </div>
+                <div class="mb-3">
+                    <label for="companyAddress" class="form-label">City</label>
+                    <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="city" required>
+                </div>
+                <div class="mb-3">
+                    <label for="companyAddress" class="form-label">Province</label>
+                    <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" name="province" required>
                 </div>
                      <div class="mb-2">
-    			<label for="companyAddress" class="form-label">Link to your company picture</label>
-                    <input type="text" class="form-control form-control-lg bg-light fs-6 rounded-pill" placeholder="Link (ex. from imgur.com)"
-                              name="picture">
+    			<label for="companyAddress" class="form-label">Upload a company icon</label>
+    			<label for="picture" class="uploadPic"><svg xmlns="http://www.w3.org/2000/svg" height="auto" viewBox="0 -960 960 960" width="100px" fill="#e8eaed"><path d="M450-313v-371L330-564l-43-43 193-193 193 193-43 43-120-120v371h-60ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/></svg></label>
+                    <input type="file" id="picture" name="picture" accept="image/png, image/jpeg, image/webp"/>
+        <p id="fileChange">Select an image</p>
+        <div id="imagePreviewContainer">
+        <img id="imagePreview" src="" alt="Image preview will appear here" style="max-width: 200px; display: none; margin-top: 10px; object-fit: cover; aspect-ratio: 1/1; border-radius: 50%;
+        border: 5px solid lightgreen"/>
+    </div>
     				</div>
                     <div class="input-group mb-3 form-group">
                <textarea class="form-control mt-3" name="desc" rows="4" cols="50" placeholder="Add description to your profile (Optional)"></textarea>
@@ -194,20 +237,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        	const input = document.querySelector("#phone");
-        	window.intlTelInput(input, {
-        	  initialCountry: "auto",
-        	  geoIpLookup: callback => {
-        	    fetch("https://ipapi.co/json")
-        	      .then(res => res.json())
-        	      .then(data => callback(data.country_code))
-        	      .catch(() => callback("us"));
-        	  },
-        	  utilsScript: "/intl-tel-input/js/utils.js?1716383386062"
-        	});
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#picture').on('change', function (event) {
+            const file = event.target.files[0]; // Get the first file selected
+
+            if (file) {
+                // Display the file name
+                $('#fileChange').html('Selected file: ' + file.name);
+
+                // Create a FileReader to read the image
+                const reader = new FileReader();
+
+                // When the reader loads the file, set it as the src for the image element
+                reader.onload = function (e) {
+                    // Set the source of the image preview to the file content
+                    $('#imagePreview').attr('src', e.target.result);
+
+                    // Show the image preview
+                    $('#imagePreview').show();
+                };
+
+                // Read the image file as a data URL (base64 encoded string)
+                reader.readAsDataURL(file);
+            } else {
+                $('#fileChange').html('No file selected');
+                $('#imagePreview').hide(); // Hide the image preview if no file is selected
+            }
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>

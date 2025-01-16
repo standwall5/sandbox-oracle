@@ -13,22 +13,21 @@ public class testConnection {
 	private static final String password = "sandboxUser";
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		
+		
+		
 		try {
 		Connection con = DriverManager.getConnection(jdbcURL, username, password);
 			if (con != null) {
 				System.out.println("Connection Successful");
-				PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM C##STUDENT_PROJECT.testing");
+				PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM testing");
 				ResultSet rs = preparedStatement.executeQuery();
 				
 				while (rs.next()) {
 					int id = rs.getInt("id");
-					Clob desc = rs.getClob("description");
 					String name = rs.getString("name");
 					int age = rs.getInt("age");
 					
-					String description = (desc != null) ? desc.getSubString(1, (int) desc.length()) : "No description";
-					
-					System.out.printf("ID: %d%n Name: %s%n Description: %s%n Age: %d%n", id, name, description, age);
+					System.out.printf("ID: %d%n Name: %s%n Age: %d%n", id, name, age);
 				}
 				
 			}

@@ -158,7 +158,7 @@ body {
 						name="lname" required="required">
             </div>
             <div class="input-group mb-3 form-group">
-              <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="E-Mail Address"
+              <input type="email" class="form-control form-control-lg bg-light fs-6" placeholder="E-Mail Address"
 						name="email" required="required">
             </div>
             <div class="input-group mb-3 form-group">

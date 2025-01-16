@@ -1,5 +1,8 @@
 package sandbox.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 	private int id;
 	private int id3;	// Not sure why there are two IDs, I think I ran into a problem of reusing this parameter in a different function
@@ -9,26 +12,46 @@ public class User {
 	private String fname;
 	private String lname;
 	private String bio;
+	private String bday;
 	private String cnumber;
 	private String district;
 	private String barangay;
 	private String address;
 	private String workhist;
 	private String educhist;
-	private String skills;
+//	private String skills;
 	private String resdesc;
 	private String icon;
+	private String specificAddress;
+	private String email;
+	
+	
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	private List<WorkHist> workHistory;
+    private List<Skills> skills;
+    private List<Education> education;
+	
 	public String getIcon() {
 		return icon;
 	}
 
-	public User (String address, String workhist, String educhist, String skills, String resdesc) {
-		this.address = address;
-		this.workhist = workhist;
-		this.educhist = educhist;
-		this.skills = skills;
-		this.resdesc = resdesc;
-	}
+	
+//	users.add(new User(userId, fname, lname, cnumber, specific_address, district, barangay));
+//	
+//	public User (String address, String workhist, String educhist, String skills, String resdesc) {
+//		this.address = address;
+//		this.workhist = workhist;
+//		this.educhist = educhist;
+//		this.skills = skills;
+//		this.resdesc = resdesc;
+//	}
 	
 	public void setIcon(String icon) {
 		this.icon = icon;
@@ -39,28 +62,60 @@ public class User {
 		this.idApp = idApp;
 	}
 	
-	public User(int id, String fname, String lname, String district, String barangay, String bio, String icon) {
+	public User(int id, String fname, String lname, String bio, String icon, String district, String barangay, String email) {
 		this.id = id;
 		this.fname = fname;
 		this.lname = lname;
-		this.district = district;
-		this.barangay = barangay;
 		this.bio = bio;
 		this.icon = icon;
+		this.district = district;
+		this.barangay = barangay;
+		this.email = email;
 	}
 	
-	public User(int id, String fname, String lname, String cnumber, String district, String barangay, String address, String workhist, String educhist, String skills, String resdesc) {
+//	users.add(new User(userId, fname, lname, cnumber, specific_address, district, barangay));
+	
+	public User(int id, String fname, String lname, String icon, String bio, String bday, String cnumber, String specificAddress, String district, String barangay, String email) {
 		this.id = id;
 		this.fname = fname;
 		this.lname = lname;
+		this.bio = bio;
+		this.icon = icon;
 		this.cnumber = cnumber;
+		this.specificAddress = specificAddress;
 		this.district = district;
 		this.barangay = barangay;
-		this.address = address;
-		this.workhist = workhist;
-		this.educhist = educhist;
-		this.skills = skills;
-		this.resdesc = resdesc;
+		this.email = email;
+	}
+	
+	
+	public User(int id, String fname, String lname, String bio, String cnumber, String specificAddress, String district, String barangay, List<WorkHist> workHistory, List<Education> educ, List<Skills> skills) {
+		this.id = id;
+		this.fname = fname;
+		this.lname = lname;
+		this.bio = bio;
+		this.cnumber = cnumber;
+		this.specificAddress = specificAddress;
+		this.district = district;
+		this.barangay = barangay;
+		this.workHistory = workHistory;
+        this.skills = skills;
+        this.education = educ;
+	}
+	
+	public User(int id, String fname, String lname, String bio, String email, String cnumber, String specificAddress, String district, String barangay, List<WorkHist> workHistory, List<Education> educ, List<Skills> skills) {
+		this.id = id;
+		this.fname = fname;
+		this.lname = lname;
+		this.bio = bio;
+		this.email = email;
+		this.cnumber = cnumber;
+		this.specificAddress = specificAddress;
+		this.district = district;
+		this.barangay = barangay;
+		this.workHistory = workHistory;
+        this.skills = skills;
+        this.education = educ;
 	}
 
 
@@ -154,18 +209,48 @@ public class User {
 	}
 
 
-	public String getSkills() {
-		return skills;
-	}
-
-
-	public void setSkills(String skills) {
-		this.skills = skills;
-	}
+//	public String getSkills() {
+//		return skills;
+//	}
+//
+//
+//	public void setSkills(String skills) {
+//		this.skills = skills;
+//	}
 
 
 	public String getResdesc() {
 		return resdesc;
+	}
+
+
+	public List<WorkHist> getWorkHistory() {
+		return workHistory;
+	}
+
+
+	public void setWorkHistory(List<WorkHist> workHistory) {
+		this.workHistory = workHistory;
+	}
+
+
+	public List<Skills> getSkills() {
+		return skills;
+	}
+
+
+	public void setSkills(List<Skills> skills) {
+		this.skills = skills;
+	}
+
+
+	public List<Education> getEducation() {
+		return education;
+	}
+
+
+	public void setEducation(List<Education> education) {
+		this.education = education;
 	}
 
 
@@ -223,6 +308,26 @@ public class User {
 	}
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+
+	public String getSpecificAddress() {
+		return specificAddress;
+	}
+
+
+	public void setSpecificAddress(String specificAddress) {
+		this.specificAddress = specificAddress;
+	}
+
+
+	public String getBday() {
+		return bday;
+	}
+
+
+	public void setBday(String bday) {
+		this.bday = bday;
 	}
 
 

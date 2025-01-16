@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import sandbox.model.Contact;
 import sandbox.model.User;
 import sandbox.model.UserLogin;
 
@@ -56,8 +58,15 @@ public class RegisterServlet extends HttpServlet {
 					rd.forward(request, response);	
 					return;
 				}
-				
-			UserLogin user2 = new UserLogin(fname, lname, email, password);
+			HttpSession session = request.getSession(true);
+			Contact userContact = new Contact(email);
+			
+			session.setMaxInactiveInterval(60 * 60);
+			session.setAttribute("userContact", userContact);
+			UserLogin user = new UserLogin(fname, lname, password);
+			session.setAttribute("user", user);
+			
+			System.out.println(session.getAttribute("userContact"));
 			
 			RequestDispatcher rd = request.getRequestDispatcher("registerDetails.jsp");
 			rd.forward(request, response);	

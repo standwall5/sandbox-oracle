@@ -76,7 +76,9 @@
 
 .zoomable {
             flex-wrap: wrap;
-            zoom: 108%;
+            flex-direction: column;
+            zoom: 200%;
+            gap:1rem;
         }
         .zoomable label {
             display: inline-block;
@@ -84,26 +86,32 @@
             margin: 10px;
             transition: transform 0.2s ease-in-out;
         }
-        .zoomable input[type="radio"] {
-            display: none;
-        }
-        .zoomable img {
-            width: 100%;
-            max-width: 275px;
-            height: auto;
-            border: 5px solid transparent;
-            border-radius: 50px;
+        
+        .zoomable svg {
+        	fill: grey;
+            transition: .2s;
+            width: 110px;
+            border: 3px solid transparent;
+            border-radius: 30%;
             transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
         }
-
-        .zoomable img:hover{
+        .zoomable svg:hover {
+        	fill: black;
             transform: scale(1.1);
-            border-color: #d8ffba;
-
+            border-color: lightgreen;
         }
-        .zoomable input[type="radio"]:checked + img {
-            transform: scale(1.1);
-            border-color: #d8ffba;
+            
+        
+
+        .zoomable input {
+        display: none;
+        }
+        #fileChange span {
+        	color: #3cb474;
+        }
+        
+        #imagePreview {
+        	display: none;
         }
 
 
@@ -127,30 +135,71 @@
     </header>
 
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <form action="registerLast" class="text-center" method="post">
+    <form action="registerLast" class="text-center" method="post" enctype="multipart/form-data">
     <div class="zoomable d-flex justify-content-center">
-        <label>
-            <input type="radio" name="icon" value="https://i.imgur.com/oibraT7.jpg">
-            <img class="icon" src="https://i.imgur.com/oibraT7.jpg" alt="Icon 1"/>
-        </label>
-        <label>
-            <input type="radio" name="icon" value="https://i.imgur.com/uWOHbRg.jpg">
-            <img class="icon" src="https://i.imgur.com/uWOHbRg.jpg" alt="Icon 2"/>
-        </label>
-        <label>
-            <input type="radio" name="icon" value="https://i.imgur.com/Rzckc8T.jpg">
-            <img class="icon" src="https://i.imgur.com/Rzckc8T.jpg" alt="Icon 3"/>
-        </label>
-        <label>
-            <input type="radio" name="icon" value="https://i.imgur.com/9Yx1cKV.jpg">
-            <img class="icon" src="https://i.imgur.com/9Yx1cKV.jpg" alt="Icon 4"/>
-        </label>
+        
+        <label for="icon"><svg xmlns="http://www.w3.org/2000/svg" height="auto" viewBox="0 -960 960 960" width="100px" fill="#e8eaed"><path d="M450-313v-371L330-564l-43-43 193-193 193 193-43 43-120-120v371h-60ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/></svg></label>
+        <input type="file" id="icon" name="icon" accept="image/png, image/jpeg, image/webp"/>
+        <p id="fileChange">Select an image</p>
     </div>
-    <div class="mt-5">
-    <button type="submit" class="btn btn-1 fw-bold">Select your icon</button>
+    <div>
+    <button type="submit" class="btn btn-1 fw-bold" style="zoom: 150%;">Submit</button>
     </div>
 </form>  
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="zoomable d-flex justify-content-center">
+    <label for="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" height="auto" viewBox="0 -960 960 960" width="100px" fill="#e8eaed">
+            <path d="M450-313v-371L330-564l-43-43 193-193 193 193-43 43-120-120v371h-60ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/>
+        </svg>
+    </label>
+    <input type="file" id="icon" name="icon" accept="image/png, image/jpeg, image/webp"/>
+    <p id="fileChange">Select an image</p>
+    <div id="imagePreviewContainer">
+        <img id="imagePreview" src="" alt="Image preview will appear here" style="max-width: 200px; display: none; margin-top: 10px; object-fit: cover; aspect-ratio: 1/1; border-radius: 50%;
+        border: 5px solid lightgreen"/>
+    </div>
+</div>
+<div>
+    <button type="submit" class="btn btn-1 fw-bold" style="zoom: 150%;">Submit</button>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#icon').on('change', function (event) {
+            const file = event.target.files[0]; // Get the first file selected
+
+            if (file) {
+                // Display the file name
+                $('#fileChange').html('Selected file: ' + file.name);
+
+                // Create a FileReader to read the image
+                const reader = new FileReader();
+
+                // When the reader loads the file, set it as the src for the image element
+                reader.onload = function (e) {
+                    // Set the source of the image preview to the file content
+                    $('#imagePreview').attr('src', e.target.result);
+
+                    // Show the image preview
+                    $('#imagePreview').show();
+                };
+
+                // Read the image file as a data URL (base64 encoded string)
+                reader.readAsDataURL(file);
+            } else {
+                $('#fileChange').html('No file selected');
+                $('#imagePreview').hide(); // Hide the image preview if no file is selected
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

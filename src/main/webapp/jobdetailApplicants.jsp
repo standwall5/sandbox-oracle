@@ -94,6 +94,16 @@
     .anyButton:hover {
         background-position: right center;
     }
+    .applicant-info {
+    	display: flex;
+    	justify-content: space-around;
+    	align-items: center;
+    	padding: 1rem;
+    }
+    .demographic {
+    	line-height: 2.2rem;
+    }
+    
     </style>
 </head>
 <body>
@@ -126,7 +136,12 @@
                 
                 <c:choose>
                     <c:when test="${mode == 0}">
-                        <button id="applyButton" class="btn btn-1 fw-bold" data-work-id="${work.id}">Apply now with resume created</button>
+                    	<c:if test="${exists == 0 }"> <!-- if they havent applied yet -->
+                        	<button id="applyButton" class="btn btn-1 fw-bold" data-work-id="${work.id}">Apply now with resume created</button>
+                        </c:if>
+                        <c:if test="${exists == 1 }">
+                        	<button id="withdrawButton" class="btn btn-1 fw-bold" data-work-id="${work.id}">Withdraw application</button>
+                        </c:if>
                     </c:when>
                     <c:when test="${mode == 1}">
                         <button class="btn btn-1 fw-bold" onclick="window.location.href = 'joblistCompany';">View all job listings</button>
@@ -134,21 +149,45 @@
                 </c:choose>
             </div>
             
-            <c:if test="${mode == 1}">
+            <c:if test="${sessionScope.mode == 1}">
     <div class="mt-4">
         <h3>List of Applicants:</h3>
         <c:if test="${not empty listUser}">
             <c:forEach var="user" items="${listUser}">
                 <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
+                	<div class="applicant-info">
+                	<div class="demographic">
                     <h4>${user.fname} ${user.lname}</h4>
+                    <p><strong>Email:</strong> ${user.email}</p>
                     <p><strong>Contact Number:</strong> ${user.cnumber}</p>
                     <p><strong>District:</strong> ${user.district}</p>
                     <p><strong>Barangay:</strong> ${user.barangay}</p>
-                    <p><strong>Address:</strong> ${user.address}</p>
-                    <p><strong>Work History:</strong> ${user.workhist}</p>
-                    <p><strong>Educational History:</strong> ${user.educhist}</p>
-                    <p><strong>Skills:</strong> ${user.skills}</p>
-                    <p><strong>Resume Description:</strong> ${user.resdesc}</p>
+                    <p><strong>Address:</strong> ${user.specificAddress}</p>
+                    <p><strong>Description:</strong> ${user.bio}</p>
+                    </div>
+                    <div class="resume">
+                    <h4>Work, Education & Skills</h4>
+                    <c:if test="${not empty user.workHistory}">
+                    	<p><strong>Work History:</strong><br> 
+                    	<c:forEach var="workHist" items="${user.workHistory}">
+                    		${workHist.jobTitle} | ${workHist.companyName} | ${workHist.startYear} - ${workHist.endYear}</p>
+                    	</c:forEach>
+                    </c:if>
+                     <c:if test="${not empty user.education}">
+                     	<p><strong>Educational History:</strong> <br>
+                    	<c:forEach var="educ" items="${user.education}">
+                    		${educ.school_name} | ${educ.degree} | ${educ.start_year} | ${educ.end_year}</p>
+                    	</c:forEach>
+                    </c:if>
+                      <c:if test="${not empty user.skills}">
+                      	<p><strong>Skills:</strong> <br>
+                    	<c:forEach var="skills" items="${user.skills}">
+                    		${skills.name}</p>
+                     	</c:forEach>
+                    </c:if>
+                    </div>
+                    </div>
+                    
                     
                    
                        <button class="btn btn-1 fw-bold" onclick="confirmAccept('<c:out value="${user.id}" />', '<c:out value="${work.id}" />')">Accept</button>
@@ -191,6 +230,9 @@ $(document).ready(function() {
                     title: 'Application Submitted Successfully!',
                     showConfirmButton: false,
                     timer: 1500
+                }).then(() => {
+                    // Refresh the page after the success notification
+                    location.reload();
                 });
             } else if (response === 'already_applied') {
                 console.log('User has already applied to this job');
@@ -209,6 +251,45 @@ $(document).ready(function() {
                 icon: 'error',
                 title: 'Error',
                 text: 'Failed to submit application. Please try again.',
+            });
+        });
+    });
+    
+    $('#withdrawButton').click(function() {
+
+        var workId = $(this).data('work-id');
+
+        $.get('withdrawApp?id=' + workId, function(response) {
+
+            if (response === 'success') {
+                console.log('Application submitted successfully');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Application Withdrawn.',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    // Refresh the page after the success notification
+                    location.reload();
+                });
+            } else {
+                console.log('Withraw unsuccessful');
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to withdraw application. Please try again.',
+                });
+            }
+        }).fail(function(xhr, status, error) {
+
+            console.error('Error submitting application:', error);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to withdraw application. Please try again.',
             });
         });
     });

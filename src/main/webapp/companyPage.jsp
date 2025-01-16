@@ -109,7 +109,7 @@
 <div class="container dflex justify-content-center align-items-center">
     <div class="mb-5">
     <div class="profile-header">
-        <img src="${company.icon}" class="icon" alt="Profile Picture">
+        <img class="profile-pic" src="getImageCompanyResult?id=${companyNow}" class="icon" alt="Profile Picture">
         <h1><img src="https://i.imgur.com/uQNIcJO.png" width="300px;"/></h1>
     </div>
     
@@ -121,15 +121,27 @@
                         <h3>${company.name}</h3>
                         <p>${company.address}</p>
                     </div>
-                    <button class="btn btn-outline-secondary">Edit Profile</button>
+                   <!--  <button class="btn btn-outline-secondary">Edit Profile</button> --> 
                 </div>
-                <div class="d-flex justify-content-between mt-3">
+                <!-- <div class="d-flex justify-content-between mt-3">
                 </div>
                 <div>
-                </div>
+                </div> -->
             </div>
             
-           
+           <c:forEach var="work" items="${listJobCompany}">
+
+			<!-- <c:if test="${work.id != 1}"> -->
+			
+            <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
+                <h3>${work.title}</h3>
+                <p>Date Posted: <span class="postdate" data-postdate="${work.postdate}"></span></p>
+                <p>Company: ${work.companyname}</p>
+                <p>Location: ${work.address}</p>
+                <a href="showJobDetails?id=<c:out value='${work.id}'/>" class="btn btn-1">View Details</a>
+            </div>
+            <!-- </c:if> -->
+            </c:forEach>
             
           
         </div>
@@ -139,12 +151,12 @@
                 <h5>Description</h5>
                 <p>${company.desc}</p>
             </div>
-            <c:if test="${mode == 1}">
-            <c:if test="${companyNow == companyID}">
-             <div class="text-center">
-            <button class="btn btn-1 btn-lg w-100 fw-bold mb-3" onclick="window.location.href = 'makeJobPost.jsp';">Add Job Listing</button>
-            <button class="btn btn-1 btn-lg w-100 fw-bold mb-3" onclick="window.location.href='${pageContext.request.contextPath}/joblistCompany'">View Job Applications</button>
-            </div>
+            <c:if test="${sessionScope.mode == 1}">
+            <c:if test="${companyNow == sessionScope.companyId}">
+	            <div class="text-center">
+	            <button class="btn btn-1 btn-lg w-100 fw-bold mb-3" onclick="window.location.href = 'makeJobPost.jsp';">Add Job Listing</button>
+	            <button class="btn btn-1 btn-lg w-100 fw-bold mb-3" onclick="window.location.href='${pageContext.request.contextPath}/joblistCompany'">View Job Applications</button>
+	            </div>
             </c:if>
             </c:if>
         </div>

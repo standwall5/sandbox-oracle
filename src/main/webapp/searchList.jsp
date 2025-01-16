@@ -142,19 +142,19 @@
         </div>
         <h3>Users</h3>
         	<c:if test="${not empty listUser}">
-			<c:forEach var="user" items="${listUser}">
-			<c:if test="${user.id != $currentUser}">
-			<c:if test="${user.id != 6}">
-            <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
-            	<img src="${user.icon}" style=" width: 100px; border-radius: 50%;"/>
-                <h3>${user.fname} ${user.lname }</h3>
-                <p>Description: ${user.bio}</p>
-                <p>Location: ${user.district}, ${user.barangay}</p>
-                <a href="user?id=<c:out value='${user.id}'/>" class="btn btn-1">Visit Profile</a>
-            </div>
-            </c:if>
-            </c:if>
-            </c:forEach>
+				<c:forEach var="user" items="${listUser}">
+					<c:if test="${user.id != sessionScope.userId}"> <!-- avoid showing current user in results (NOTE: sessionScope is required to specify we are accessing data from session) -->
+						<c:if test="${user.id != 6}">
+				            <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
+				            	<img class="profile-pic" src="getImageResult?id=${user.id}" style=" width: 100px; border-radius: 50%;"/>
+				                <h3>${user.fname} ${user.lname }</h3>
+				                <p>Description: ${user.bio}</p>
+				                <p>Location: ${user.district}, ${user.barangay}</p>
+				                <a href="user?id=<c:out value='${user.id}'/>" class="btn btn-1">Visit Profile</a>
+				            </div>
+			            </c:if>
+		            </c:if>
+	            </c:forEach>
             </c:if>
             <c:if test="${empty listUser}">
             <p>No users found.</p>
@@ -163,19 +163,19 @@
         <div class="col-md-12">
         <h3>Companies</h3>
         	<c:if test="${not empty listCompany}">
-			<c:forEach var="company" items="${listCompany}">
-			<c:if test="${company.id != $currentUser}">
-			<c:if test="${company.id != 6 }">
-            <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
-            	<img src="${company.icon}" style=" width: 100px; border-radius: 50%;"/>
-                <h3>${company.name}</h3>
-                <p>Description: ${company.desc}</p>
-                <p>Location: ${company.address}</p>
-                <a href="company?id=<c:out value='${company.id}'/>" class="btn btn-1">Visit Company Profile</a>
-            </div>
-            </c:if>
-            </c:if>
-            </c:forEach>
+				<c:forEach var="company" items="${listCompany}">
+					<c:if test="${company.id != sessionScope.currentUser}"> <!-- avoid showing the result of the logged in company -->
+						<c:if test="${company.id != 1 }"> <!-- The no company row (used for a unique emp id, to specify a user is not employed in a company -->
+				            <div class="job-listing bg-white p-4 rounded-4 shadow-sm mb-3">
+				            	<img class="profile-pic" src="getImageCompanyResult?id=${company.id}" style=" width: 100px; border-radius: 50%;"/> <!-- 2 diff getImage functions because the sql is different -->
+				                <h3>${company.name}</h3>
+				                <p>Description: ${company.desc}</p>
+				                <p>Location: ${company.address}, ${company.city}, ${company.province}</p>
+				                <a href="company?id=<c:out value='${company.id}'/>" class="btn btn-1">Visit Company Profile</a>
+				            </div>
+			            </c:if>
+		            </c:if>
+	            </c:forEach>
             </c:if>
             <c:if test="${empty listCompany}">
             <p>No companies found.</p>
