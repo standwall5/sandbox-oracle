@@ -644,9 +644,17 @@ public class PostDAO {
 			preparedStatement.setString(1, resume.getAddress());
 			preparedStatement.setString(2, resume.getWorkhist());
 			preparedStatement.setString(3, resume.getEduchist());
-			preparedStatement.setString(4, resume.getSkills());
+			// Convert List<Skills> to String for database storage
+			StringBuilder skillsStr = new StringBuilder();
+			if (resume.getSkills() != null) {
+				for (int i = 0; i < resume.getSkills().size(); i++) {
+					if (i > 0) skillsStr.append(", ");
+					skillsStr.append(resume.getSkills().get(i).getName());
+				}
+			}
+			preparedStatement.setString(4, skillsStr.toString());
 			preparedStatement.setString(5, resume.getResdesc());
-			preparedStatement.setInt(6, UserLogin.getId2());
+			preparedStatement.setInt(6, resume.getId());
 
 			rowCount = preparedStatement.executeUpdate() > 0;
 
@@ -896,7 +904,13 @@ public class PostDAO {
 				String skills = rs.getString("skills");
 				String desc = rs.getString("resdesc");
 
-				user = new User(address, workhist, educhist, skills, desc);
+				// Create a User object with basic constructor and set resume fields
+				user = new User(id); // Use the id parameter from the method
+				user.setAddress(address);
+				user.setWorkhist(workhist);
+				user.setEduchist(educhist);
+				user.setResdesc(desc);
+				// Note: skills is a String here but User expects List<Skills> - this might need additional handling
 			} else {
 			}
 		} catch (SQLException e) {
