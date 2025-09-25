@@ -24,24 +24,35 @@ public class ImageUploadService {
      */
     public static String uploadUserImage(InputStream fileContent, int userId) {
         try {
+            // Check if Cloudinary is properly configured
+            if (!CloudinaryConfig.isConfigured()) {
+                System.err.println("Cloudinary is not properly configured. Check environment variables.");
+                return null;
+            }
+            
             String publicId = "user_profile_" + userId + "_" + System.currentTimeMillis();
             
-            Map uploadResult = cloudinary.uploader().upload(fileContent, ObjectUtils.asMap(
+            // Upload parameters according to official documentation
+            Map<String, Object> uploadParams = ObjectUtils.asMap(
                 "public_id", publicId,
                 "folder", "peso-app/users",
-                "transformation", ObjectUtils.asMap(
-                    "width", 300,
-                    "height", 300,
-                    "crop", "fill",
-                    "quality", "auto"
-                ),
-                "format", "jpg"
-            ));
+                "width", 300,
+                "height", 300,
+                "crop", "fill",
+                "quality", "auto",
+                "format", "jpg",
+                "overwrite", true,
+                "resource_type", "image"
+            );
             
-            return (String) uploadResult.get("secure_url");
+            Map uploadResult = cloudinary.uploader().upload(fileContent, uploadParams);
             
-        } catch (IOException e) {
-            System.err.println("Failed to upload user image: " + e.getMessage());
+            String secureUrl = (String) uploadResult.get("secure_url");
+            System.out.println("Successfully uploaded user image: " + secureUrl);
+            return secureUrl;
+            
+        } catch (Exception e) {
+            System.err.println("Failed to upload user image for user " + userId + ": " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -55,24 +66,35 @@ public class ImageUploadService {
      */
     public static String uploadCompanyImage(InputStream fileContent, int companyId) {
         try {
+            // Check if Cloudinary is properly configured
+            if (!CloudinaryConfig.isConfigured()) {
+                System.err.println("Cloudinary is not properly configured. Check environment variables.");
+                return null;
+            }
+            
             String publicId = "company_logo_" + companyId + "_" + System.currentTimeMillis();
             
-            Map uploadResult = cloudinary.uploader().upload(fileContent, ObjectUtils.asMap(
+            // Upload parameters according to official documentation
+            Map<String, Object> uploadParams = ObjectUtils.asMap(
                 "public_id", publicId,
                 "folder", "peso-app/companies",
-                "transformation", ObjectUtils.asMap(
-                    "width", 400,
-                    "height", 300,
-                    "crop", "fit",
-                    "quality", "auto"
-                ),
-                "format", "jpg"
-            ));
+                "width", 400,
+                "height", 300,
+                "crop", "fit",
+                "quality", "auto",
+                "format", "jpg",
+                "overwrite", true,
+                "resource_type", "image"
+            );
             
-            return (String) uploadResult.get("secure_url");
+            Map uploadResult = cloudinary.uploader().upload(fileContent, uploadParams);
             
-        } catch (IOException e) {
-            System.err.println("Failed to upload company image: " + e.getMessage());
+            String secureUrl = (String) uploadResult.get("secure_url");
+            System.out.println("Successfully uploaded company image: " + secureUrl);
+            return secureUrl;
+            
+        } catch (Exception e) {
+            System.err.println("Failed to upload company image for company " + companyId + ": " + e.getMessage());
             e.printStackTrace();
             return null;
         }

@@ -106,7 +106,7 @@ include file="navbar.jsp" %>
       .navbar {
         border-bottom: 2px solid #ccc;
         padding-bottom: 10px;
-        background-image: url("images/background.png");
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         background-size: 97%;
       }
 
