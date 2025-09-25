@@ -120,7 +120,7 @@
 
 <div class="container mt-5">
     <div class="profile-header text-center rounded-5 shadow-sm">
-        <img src="https://i.imgur.com/uQNIcJO.png" alt="Logo" width="100"/>
+        <img src="images/peso-1.png" alt="Logo" width="100"/>
 		<h1 class="fw-bold">Job Details</h1>
     </div>
     

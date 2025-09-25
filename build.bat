@@ -1,5 +1,12 @@
 @echo off
-echo Building sandbox-oracle project...
+echo Building sandbox-oracle project with Java 21...
+
+REM Set JAVA_HOME to use Java 21 LTS
+set JAVA_HOME=C:\Program Files\Java\jdk-21
+set PATH=%JAVA_HOME%\bin;%PATH%
+
+REM Create upload directory for file handling
+if not exist "C:\temp\uploads" mkdir "C:\temp\uploads"
 
 REM Create build directory
 if not exist "build\classes" mkdir "build\classes"
@@ -8,16 +15,16 @@ if not exist "build\war" mkdir "build\war"
 echo Compiling Java files...
 
 REM Compile all Java files except the problematic PostDAO.java
-javac -d build\classes -cp "src\main\webapp\WEB-INF\lib\*" -sourcepath src\main\java src\main\java\sandbox\model\*.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "src\main\webapp\WEB-INF\lib\*" -sourcepath src\main\java src\main\java\sandbox\model\*.java
 if errorlevel 1 goto :error
 
-javac -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\sandbox\dao\HistDAO.java src\main\java\sandbox\dao\SearchDAO.java src\main\java\sandbox\dao\UserDAO.java src\main\java\sandbox\dao\PostDAO.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\sandbox\dao\HistDAO.java src\main\java\sandbox\dao\SearchDAO.java src\main\java\sandbox\dao\UserDAO.java src\main\java\sandbox\dao\PostDAO.java
 if errorlevel 1 goto :error
 
-javac -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\sandbox\web\LoginServlet.java src\main\java\sandbox\web\LoginServletCompany.java src\main\java\sandbox\web\Logout.java src\main\java\sandbox\web\RegisterServlet.java src\main\java\sandbox\web\UserServlet.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\sandbox\web\LoginServlet.java src\main\java\sandbox\web\LoginServletCompany.java src\main\java\sandbox\web\Logout.java src\main\java\sandbox\web\RegisterServlet.java src\main\java\sandbox\web\UserServlet.java
 if errorlevel 1 goto :error
 
-javac -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\test\testConnection.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "src\main\webapp\WEB-INF\lib\*;build\classes" -sourcepath src\main\java src\main\java\test\testConnection.java
 if errorlevel 1 goto :error
 
 echo Compilation successful!

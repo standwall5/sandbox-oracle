@@ -110,7 +110,7 @@
     <div class="container mt-5">
         <!-- Navigation Bar -->
         <div class="profile-header text-center rounded-5 shadow-sm">
-            <img src="https://i.imgur.com/uQNIcJO.png" alt="Logo" width="100">
+            <img src="images/peso-1.png" alt="Logo" width="100">
             <c:if test="${user.address == null}">
             <h1 class="fw-bold text-black">Create Resume</h1>
             </c:if>

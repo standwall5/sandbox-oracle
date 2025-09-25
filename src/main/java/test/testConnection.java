@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.sql.Clob;
 
 public class testConnection {
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String username = "sandbox"; // Replace with your Oracle username
-	private static final String password = "sandboxUser";
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String username = "postgres";
+	private static final String password = "pgLarry1!";
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		
 		
@@ -19,15 +19,16 @@ public class testConnection {
 		Connection con = DriverManager.getConnection(jdbcURL, username, password);
 			if (con != null) {
 				System.out.println("Connection Successful");
-				PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM testing");
+				PreparedStatement preparedStatement = con.prepareStatement("SELECT u.user_id, u.first_name, u.last_name, c.email FROM users u LEFT JOIN contact c ON u.contact_id = c.contact_id LIMIT 3");
 				ResultSet rs = preparedStatement.executeQuery();
 				
 				while (rs.next()) {
-					int id = rs.getInt("id");
-					String name = rs.getString("name");
-					int age = rs.getInt("age");
+					int id = rs.getInt("user_id");
+					String fname = rs.getString("first_name");
+					String lname = rs.getString("last_name");
+					String email = rs.getString("email");
 					
-					System.out.printf("ID: %d%n Name: %s%n Age: %d%n", id, name, age);
+					System.out.printf("ID: %d%n Name: %s %s%n Email: %s%n%n", id, fname, lname, email);
 				}
 				
 			}

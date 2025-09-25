@@ -15,14 +15,18 @@ import sandbox.model.User;
 import sandbox.model.WorkHist;
 
 public class UserDAO {
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String jdbcUsername = "sandbox";
-	private static final String jdbcPassword = "sandboxUser";
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	private static final String jdbcDriver = "org.postgresql.Driver";
 
 	protected Connection getConnection() {
 		Connection conn = null;
 		try {
+			Class.forName(jdbcDriver);
 			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

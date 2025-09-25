@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
-import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.model.Company;
 import sandbox.model.CompanyContact;
 import sandbox.model.Contact;
@@ -28,10 +27,11 @@ import sandbox.model.WorkHist;
 
 public class PostDAO {
 	
-//	Database Credentials
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String jdbcUsername = "sandbox";
-	private static final String jdbcPassword = "sandboxUser";
+//	Database Credentials - PostgreSQL
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	private static final String jdbcDriver = "org.postgresql.Driver";
 //	End of db cred
 	
 //	SQL queries to be used
@@ -54,13 +54,12 @@ public class PostDAO {
 	
 //	Connection function (used in every function thereafter to connect to database
 	protected Connection getConnection() throws SQLException{
-		OracleDataSource ods = new OracleDataSource();
 		Connection conn = null;
 		try {
-			ods.setURL(jdbcURL);
-			ods.setUser(jdbcUsername);
-			ods.setPassword(jdbcPassword);
-			conn = ods.getConnection();
+			Class.forName(jdbcDriver);
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -251,7 +250,7 @@ public class PostDAO {
 	            if (contactId != -1) {   // If we got the contact_id
 	                // Insert the user details into the "USERS" table
 	                try (PreparedStatement stmt3 = conn.prepareStatement(
-	                    "INSERT INTO USERS (first_name, last_name, description, contact_id, password, icon, birth_date, employee_id) VALUES (?, ?, ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), 1)")) {
+	                    "INSERT INTO USERS (first_name, last_name, description, contact_id, password, icon, birth_date, employee_id) VALUES (?, ?, ?, ?, ?, ?, ?::date, 1)")) {
 	                    stmt3.setString(1, user.getFname());
 	                    stmt3.setString(2, user.getLname());
 	                    stmt3.setString(3, user.getBio());

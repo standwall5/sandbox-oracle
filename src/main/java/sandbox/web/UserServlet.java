@@ -27,7 +27,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.dao.HistDAO;
 import sandbox.dao.PostDAO;
 import sandbox.dao.SearchDAO;
@@ -46,10 +45,8 @@ import sandbox.model.WorkHist;
 /**
  * Servlet implementation class UserServlet
  */
-
-@WebServlet("/")
 @MultipartConfig(
-	    location = "/tmp",  // Temporary directory for file uploads
+	    location = "/tmp",  // temporary directory for file uploads
 	    maxFileSize = 1024 * 1024 * 10,  // 10 MB
 	    maxRequestSize = 1024 * 1024 * 20,  // 20 MB
 	    fileSizeThreshold = 1024 * 1024  // 1 MB
@@ -60,6 +57,20 @@ public class UserServlet extends HttpServlet {
 	private PostDAO postDAO;
 	private SearchDAO searchDAO;
 	private HistDAO histDAO;
+
+	// PostgreSQL connection details
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	
+	private Connection getConnection() throws SQLException {
+		try {
+			Class.forName("org.postgresql.Driver");
+			return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new SQLException("PostgreSQL Driver not found", e);
+		}
+	}
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -96,9 +107,13 @@ public class UserServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 			break;
-//		case "/RegisterCompanyUser":
-//			insertCompanyUser(request, response);
-//			break;
+		case "/RegisterCompanyUser":
+			try {
+				insertCompanyUser(request, response);
+			} catch (ServletException | IOException | SQLException e) {
+				e.printStackTrace();
+			}
+			break;
 		case "/makePost":
 			try {
 				createPost(request, response);
@@ -809,13 +824,9 @@ public class UserServlet extends HttpServlet {
 
 	private void createPost(HttpServletRequest request, HttpServletResponse response) throws SQLException {
 		HttpSession session = request.getSession(true);
-		OracleDataSource ods = new OracleDataSource();
 		Connection con = null;
 		try {
-			ods.setURL("jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1");
-			ods.setUser("sandbox");
-			ods.setPassword("sandboxUser");
-			con = ods.getConnection();
+			con = getConnection();
 
 			String title = request.getParameter("title");
 			String category = request.getParameter("category");
@@ -828,7 +839,7 @@ public class UserServlet extends HttpServlet {
 
 			PreparedStatement preparedStatement = con.prepareStatement(
 					"INSERT INTO job_posts (title, category, address, description, post_date, company_id) VALUES "
-							+ "(?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?)");
+							+ "(?, ?, ?, ?, ?::date, ?)");
 
 			preparedStatement.setString(1, title);
 			preparedStatement.setString(2, category);
@@ -856,13 +867,9 @@ public class UserServlet extends HttpServlet {
 	// Part of registration -- for resume creation
 	private void insertCompany(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException, SQLException {
-		OracleDataSource ods = new OracleDataSource();
 		Connection con = null;
 		try {
-			ods.setURL("jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1");
-			ods.setUser("sandbox");
-			ods.setPassword("sandboxUser");
-			con = ods.getConnection();
+			con = getConnection();
 			
 			Part imagePart = request.getPart("picture");  // Retrieves the uploaded file
 	        String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
@@ -954,69 +961,58 @@ public class UserServlet extends HttpServlet {
 
 	
 	// register a company as a user
-//	private void insertCompanyUser(HttpServletRequest request, HttpServletResponse response)
-//			throws ServletException, IOException {
-//		Connection con = null;
-//		try {
-//			Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-//			con = DriverManager.getConnection("jdbc:ucanaccess://C:\\Users\\johnp\\Documents\\IM Finals.accdb");
-//
-//			String title = request.getParameter("title");
-//			String email = request.getParameter("email");
-//			String cnumber = request.getParameter("cnumber");
-//			String address = request.getParameter("address");
-//			String picture = request.getParameter("picture");
-//			String desc = request.getParameter("desc");
-//			String pass = request.getParameter("pass");
-//
-//			PreparedStatement preparedStatement = con.prepareStatement(
-//					"INSERT INTO Company (companyname, email, cnumber, address, description, companyimage, password, verify) VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
-//					PreparedStatement.RETURN_GENERATED_KEYS);
-//			preparedStatement.setString(1, title);
-//			preparedStatement.setString(2, email);
-//			preparedStatement.setString(3, cnumber);
-//			preparedStatement.setString(4, address);
-//			preparedStatement.setString(5, desc);
-//			preparedStatement.setString(6, picture);
-//			preparedStatement.setString(7, pass);
-//
-//			int rowCount = preparedStatement.executeUpdate();
-//
-//			int companyid = 0;
-//			if (rowCount > 0) {
-//				ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-//				if (generatedKeys.next()) {
-//					companyid = generatedKeys.getInt(1);
-//				}
-//			}
-//
-//			if (companyid > 0) {
-//				PreparedStatement updateStatement = con.prepareStatement("UPDATE User SET companyid = ? WHERE id = ?");
-//				updateStatement.setInt(1, companyid);
-//				updateStatement.setInt(2, UserLogin.getId2());
-//				int rowUpdate = updateStatement.executeUpdate();
-//
-//				if (rowUpdate > 0) {
-//					RequestDispatcher rd = request.getRequestDispatcher("successCompanyUser.jsp");
-//					rd.forward(request, response);
-//				}
-//			}
-//
-//		} catch (ClassNotFoundException | SQLException e) {
-//			e.printStackTrace();
-//			request.setAttribute("errorMessage3", "Failed to register company.");
-//			RequestDispatcher rd = request.getRequestDispatcher("regCompanyUser.jsp");
-//			rd.forward(request, response);
-//		} finally {
-//			if (con != null) {
-//				try {
-//					con.close();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	}
+	private void insertCompanyUser(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException, SQLException {
+		Connection con = null;
+		try {
+			con = getConnection();
+
+			String title = request.getParameter("title");
+			String email = request.getParameter("email");
+			String cnumber = request.getParameter("cnumber");
+			String address = request.getParameter("address");
+			String picture = request.getParameter("picture");
+			String desc = request.getParameter("desc");
+			String pass = request.getParameter("pass");
+
+			PreparedStatement preparedStatement = con.prepareStatement(
+					"INSERT INTO company (company_name, email, phone_number, company_address, description, company_icon, password) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING company_id");
+			preparedStatement.setString(1, title);
+			preparedStatement.setString(2, email);
+			preparedStatement.setString(3, cnumber);
+			preparedStatement.setString(4, address);
+			preparedStatement.setString(5, desc);
+			preparedStatement.setString(6, picture);
+			preparedStatement.setString(7, pass);
+
+			ResultSet rs = preparedStatement.executeQuery();
+			int companyid = 0;
+			if (rs.next()) {
+				companyid = rs.getInt(1);
+			}
+
+			if (companyid > 0) {
+				// Note: This logic assumes there's a way to link company to user
+				// For now, just redirect to success page
+				RequestDispatcher rd = request.getRequestDispatcher("successCompanyUser.jsp");
+				rd.forward(request, response);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			request.setAttribute("errorMessage3", "Failed to register company.");
+			RequestDispatcher rd = request.getRequestDispatcher("regCompanyUser.jsp");
+			rd.forward(request, response);
+		} finally {
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	private void registerUser(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -1375,14 +1371,12 @@ public class UserServlet extends HttpServlet {
 //
 //}
 	
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String jdbcUsername = "sandbox";
-	private static final String jdbcPassword = "sandboxUser";
+
 	
 	
 	
 	private void getImage(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your actual path
+		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	HttpSession session = request.getSession();
 	int userId = (int) session.getAttribute("userId"); // Get user ID from request
     String imageFileName = null;
@@ -1429,7 +1423,7 @@ public class UserServlet extends HttpServlet {
 }
 	
 	private void getImageCompany(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your actual path
+		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	HttpSession session = request.getSession();
 	int companyId = (int) session.getAttribute("companyId"); // Get user ID from request
    String imageFileName = null;
@@ -1477,7 +1471,7 @@ public class UserServlet extends HttpServlet {
 	
 	private void getImageCompanyResult(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
-		 String IMAGE_DIRECTORY = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your actual path
+		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 			int userId = Integer.parseInt(request.getParameter("id")); // Get user ID from request
 		   String imageFileName = null;
 
@@ -1523,7 +1517,7 @@ public class UserServlet extends HttpServlet {
 	
 	
 	private void getImageResult(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your actual path
+		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	int userId = Integer.parseInt(request.getParameter("id")); // Get user ID from request
    String imageFileName = null;
 
@@ -1568,14 +1562,7 @@ public class UserServlet extends HttpServlet {
 
 }
 
-private Connection getConnection() throws SQLException {
-    // Implement your connection logic here
-    OracleDataSource ods = new OracleDataSource();
-    ods.setURL("jdbc:oracle:thin:@//localhost:1521/FREEPDB1");
-    ods.setUser("sandbox");
-    ods.setPassword("sandboxUser");
-    return ods.getConnection();
-}
+
 	
 //	private void getImage(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
 //		// Dynamically determine the image type based on file extension

@@ -10,9 +10,19 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+    :root {
+        --text: #040316;
+        --background: #fbfbfe;
+        --primary: #4238ff;
+        --secondary: #e6d1ff;
+        --accent: #ffa8a8;
+    }
+
     body {
         background-image: url('https://i.imgur.com/as1eDDA.png');
         background-size: cover;
+        background-color: var(--background);
+        color: var(--text);
         font-family:'Poppins', 'sans-serif';
         font-optical-sizing: auto;
         font-weight: auto;
@@ -21,7 +31,7 @@
         overflow: hidden;
     }
     .logo {
-        width: 500px;
+        width: 300px;
         height: auto;
     }
     .wrapper {
@@ -62,15 +72,25 @@
     }
 
     .btn-1 {
-        background-image: linear-gradient(to right, #91CB9C 0%, #FFCECE 51%, #91CB9C 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 51%, var(--accent) 100%);
+        color: var(--background);
+        border: none;
         font-style: bold;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-1:hover {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 51%, var(--secondary) 100%);
+        color: var(--text);
+        transform: translateY(-2px);
     }
 
     .navi {
         transition: 0.5s;
         background-size: 200% auto;
         transition: 0.5s;
-        background-image: linear-gradient(to right, #91CB9C 0%, #FFCECE 51%, #91CB9C 100%);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 51%, var(--accent) 100%);
+        color: var(--background);
         font-style: bold;
         border-radius: 7px;
         width: 110px;
@@ -82,6 +102,24 @@
 
     .navi:hover {
         background-position: right center;
+        color: var(--text);
+        transform: translateY(-1px);
+    }
+    
+    .textbtn {
+        color: var(--text);
+        opacity: 0.8;
+        margin: 0.5rem 0;
+    }
+    
+    .navbar .text-dark,
+    .nav-link {
+        color: var(--text) !important;
+    }
+    
+    .navbar {
+        background-color: rgba(251, 251, 254, 0.95);
+        backdrop-filter: blur(10px);
     }
 
     .nav-link {
@@ -110,7 +148,7 @@
         padding: 20px;
     }
     .logo {
-        width: 250px;
+        width: 200px;
         height: auto;
     }
 
@@ -160,7 +198,7 @@
 	</header>
     <div class="container vh-100 position-relative">
         <div class="wrapper position-absolute top-50 start-0 translate-middle-y ms-3 d-flex flex-column align-items-center">
-        <img src="https://i.imgur.com/uQNIcJO.png" class="logo"/>
+        <img src="images/pesoLogo.png" class="logo"/>
         <br>
         <a href="login.jsp" class="btn btn-1 btn-lg w-50 fs-5 fw-bold">Login</button></a>
         <p class="textbtn fs-6">Start work now!</p>

@@ -92,7 +92,7 @@
         <nav class="navbar navbar-expand-md fixed-top mt-2 navbar-dark blur">
             <div class="container-fluid">
             <div>
-                <a class="navbar-brand text-dark font-weight-bold" href="index.html"><img src="https://i.imgur.com/uQNIcJO.png" width=auto height="75" class="d-inline-block align-text-top"/></a>
+                <a class="navbar-brand text-dark font-weight-bold" href="index.html"><img src="images/peso-1.png" width=auto height="75" class="d-inline-block align-text-top"/></a>
             </div>
             <ul class="navList navbar-nav ms-auto">
                 <li><a class="navi btn text-dark me-5" href="index.html">Home</a></li>

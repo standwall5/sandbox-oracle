@@ -1,8 +1,8 @@
 [Sandbox Job Application Key Details.md](https://github.com/user-attachments/files/18285691/Sandbox.Job.Application.Key.Details.md)
-<h1>Sandbox Job Application System</h1>
-<h2>Full Stack, Java with an Oracle Database</h2>
+<h1>Peso Job Application System</h1>
+<h2>Full Stack, Java with PostgreSQL Database</h2>
 
-**Sandbox Job Application Key Details**
+**Peso Job Application Key Details**
 
 **Functionalities**
 
@@ -61,11 +61,11 @@ The schema used and where the tables are contained is the C\#\#STUDENT\_PROJECT 
 
 <h3>This contains the following technologies:</h3>
 <ul>
-  <li>Java</li>
-  <li>Oracle Database 23ai (Using docker registry)</li>
-  <li>JSP</li>
-  <li>Database hosted on docker</li>
-  <li>DBeaver for Database UI</li>
+  <li>Java 21 LTS</li>
+  <li>PostgreSQL Database</li>
+  <li>JSP & Jakarta EE Servlets</li>
+  <li>Maven Build System</li>
+  <li>Heroku Deployment Ready</li>
 </ul>
 
 Resources:

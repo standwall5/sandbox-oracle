@@ -14,33 +14,36 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.model.UserLogin;
 
 /**
  * Servlet implementation class LoginServlet
  */
-@WebServlet("/UserLoginCompany") // Used if the login is through a company, not user
+// Used if the login is through a company, not user
 public class LoginServletCompany extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	// PostgreSQL connection details
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	
+	private Connection getConnection() throws SQLException {
+		try {
+			Class.forName("org.postgresql.Driver");
+			return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new SQLException("PostgreSQL Driver not found", e);
+		}
+	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		OracleDataSource ods = null;
-		try {
-			ods = new OracleDataSource();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		Connection con = null;
 		HttpSession session = request.getSession();
 
 		try {
-			ods.setURL("jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1");
-			ods.setUser("sandbox");
-			ods.setPassword("sandboxUser");
-			con = ods.getConnection();
+			con = getConnection();
 			String n = request.getParameter("uname");
 			String p = request.getParameter("password");
 

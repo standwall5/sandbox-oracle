@@ -8,25 +8,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.model.Company;
 import sandbox.model.JobPosts;
 import sandbox.model.User;
 
 public class SearchDAO {
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String jdbcUsername = "sandbox";
-	private static final String jdbcPassword = "sandboxUser";
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	private static final String jdbcDriver = "org.postgresql.Driver";
 
 	protected Connection getConnection() throws SQLException{
-		OracleDataSource ods = new OracleDataSource();
 		Connection conn = null;
 		try {
-			ods.setURL(jdbcURL);
-			ods.setUser(jdbcUsername);
-			ods.setPassword(jdbcPassword);
-//			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-			conn = ods.getConnection();
+			Class.forName(jdbcDriver);
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -110,11 +108,21 @@ public class SearchDAO {
 				String address = null;
 				String province = null;
 				String city = null;
-				try (PreparedStatement stmt = conn.prepareStatement("SELECT * FROM company_contact WHERE contact_id = ?")) {
+				
+				// Get address from contact table
+				try (PreparedStatement stmt = conn.prepareStatement("SELECT specific_address FROM contact WHERE contact_id = ?")) {
 					stmt.setInt(1, contactId);
 					ResultSet rs2 = stmt.executeQuery();
 					if (rs2.next()) {
 						address = rs2.getString("specific_address");
+					}
+				}
+				
+				// Get province and city from company_contact table
+				try (PreparedStatement stmt = conn.prepareStatement("SELECT province, city FROM company_contact WHERE contact_id = ?")) {
+					stmt.setInt(1, contactId);
+					ResultSet rs2 = stmt.executeQuery();
+					if (rs2.next()) {
 						province = rs2.getString("province");
 						city = rs2.getString("city");
 					}

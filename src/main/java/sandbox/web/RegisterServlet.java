@@ -3,7 +3,6 @@ package sandbox.web;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,8 +22,6 @@ import java.sql.SQLException;
 /**
  * Servlet implementation class RegisterServlet
  */
-
-@WebServlet("/RegisterUser")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    

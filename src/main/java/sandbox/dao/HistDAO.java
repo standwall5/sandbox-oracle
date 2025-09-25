@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
-import oracle.jdbc.datasource.impl.OracleDataSource;
 import sandbox.model.Company;
 import sandbox.model.Education;
 import sandbox.model.JobPosts;
@@ -19,19 +18,18 @@ import sandbox.model.UserEdit;
 import sandbox.model.WorkHist;
 
 public class HistDAO {
-	private static final String jdbcURL = "jdbc:oracle:thin:@//" + "localhost" + ":" + "1521" + "/" + "FREEPDB1";
-	private static final String jdbcUsername = "sandbox";
-	private static final String jdbcPassword = "sandboxUser";
+	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
+	private static final String jdbcUsername = "postgres";
+	private static final String jdbcPassword = "pgLarry1!";
+	private static final String jdbcDriver = "org.postgresql.Driver";
 
 	protected Connection getConnection() throws SQLException{
-		OracleDataSource ods = new OracleDataSource();
 		Connection conn = null;
 		try {
-			ods.setURL(jdbcURL);
-			ods.setUser(jdbcUsername);
-			ods.setPassword(jdbcPassword);
-//			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-			conn = ods.getConnection();
+			Class.forName(jdbcDriver);
+			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -59,7 +57,7 @@ public class HistDAO {
 	    int rowCount = 0;
 	    try (Connection conn = getConnection();
 	         PreparedStatement stmt = conn.prepareStatement(
-	             "UPDATE users SET first_name = ?, last_name = ?, birth_date = TO_DATE(?, 'YYYY-MM-DD'), description = ? WHERE user_id = ?")) {
+	             "UPDATE users SET first_name = ?, last_name = ?, birth_date = ?::date, description = ? WHERE user_id = ?")) {
 	        
 	        stmt.setString(1, user.getFname());
 	        stmt.setString(2, user.getLname());

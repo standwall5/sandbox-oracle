@@ -110,7 +110,7 @@
     <div class="mb-5">
     <div class="profile-header">
         <img class="profile-pic" src='getImageResult?id=${userNow}' class="icon" alt="Profile Picture">
-        <h1><img src="https://i.imgur.com/uQNIcJO.png" width="300px;"/></h1>
+        <h1><img src="images/pesoLogo.png" width="300px;"/></h1>
     </div>
     
     <div class="row">
