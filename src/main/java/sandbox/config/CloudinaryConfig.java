@@ -1,5 +1,6 @@
 package sandbox.config;
 
+import com.cloudinary.*;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 

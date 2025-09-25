@@ -25,8 +25,6 @@ import sandbox.service.ImageUploadService;
 
 public class PostDAO {
 	
-//	SQL queries to be used
-	
 	private static final String SELECT_ALL_JOBS = "select * from job_posts";
 	private static final String SELECT_ALL_JOBS_COMPANY = "select * from job_posts where company_id = ?";
 	private static final String SELECT_JOB_BY_ID = "select * from job_posts where post_id = ?";
@@ -39,73 +37,15 @@ public class PostDAO {
 	private static final String SELECT_ALL_APPLICATIONS = "SELECT * from applications where user_id = ? and post_id = ?";
 	private static final String UPDATE_USER_EMPID = "UPDATE Users set Employee_ID = ? where user_id = ?";
 	
-//	End of queries
 
 	
-	
-//	Connection function (used in every function thereafter to connect to database
 	protected Connection getConnection() throws SQLException{
 		return HerokuDatabaseConfig.getConnection();
 	}
-//	End of connection function
 	
 	
 ////	Functions
 
-//	public void connect() {
-//		try {
-//			Connection con = DriverManager.getConnection(jdbcURL, username, password);
-//				if (con != null) {
-//					System.out.println("Connection Successful");
-//					PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM testing");
-//					ResultSet rs = preparedStatement.executeQuery();
-//					
-//					while (rs.next()) {
-//						int id = rs.getInt("id");
-//						String name = rs.getString("name");
-//						int age = rs.getInt("age");
-//						
-//						System.out.printf("ID: %d%n Name: %s%n Age: %d%n", id, name, age);
-//					}
-//					
-//				}
-//				else {
-//					System.out.println("Connection failed");
-//				}
-//			}catch (Exception e) {
-//				System.out.println(e);
-//			}
-//	}
-	
-//	public boolean uploadImage(InputStream fileContent, Contact userContact) {
-//		int rowCount = 0;
-//		int contactId = 0;
-//		try (Connection conn = getConnection();
-//				PreparedStatement stmt = conn.prepareStatement("SELECT contact_id from"
-//						+ " contact where email = ?");) {
-//				ResultSet rs = null;
-//				stmt.setString(1, userContact.getEmail());
-//				rs = stmt.executeQuery();
-//				
-//            if (rs.next()) {
-//            	contactId = rs.getInt("contact_id");
-//            	try(PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET icon = ?"
-//						+ " WHERE contact_id = ?");){
-//			stmt2.setBinaryStream(1, fileContent);  // Set the BLOB
-//			stmt2.setInt(2, contactId);
-//            rowCount = stmt2.executeUpdate();
-//            } catch (Exception e) {
-//            	e.printStackTrace();
-//            	}
-//            }
-//		} catch (SQLException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//			
-//		
-//		return rowCount > 0;
-//	}
 
 	public boolean uploadImage(InputStream fileContent, Contact userContact) {
 	    int rowCount = 0;
@@ -567,31 +507,6 @@ public class PostDAO {
 		}
 	}
 	
-	
-//	For inserting a resume into the database
-//	public int insertResume(User resume, int userId) { // So resume which is a User type variable
-//		int rowCount = 0;
-//		
-//		try (Connection conn = getConnection();
-//				PreparedStatement preparedStatement = conn.prepareStatement(INSERT_INTO_RESUME);) {
-////			From that user object, we are able to retrieve information without putting much in the parameters
-//			preparedStatement.setString(1, resume.getAddress());
-//			preparedStatement.setString(2, resume.getWorkhist());
-//			preparedStatement.setString(3, resume.getEduchist());
-//			preparedStatement.setString(4, resume.getSkills());
-//			preparedStatement.setString(5, resume.getResdesc());
-//			preparedStatement.setInt(6, user.getId2());
-//			rowCount = preparedStatement.executeUpdate();
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return rowCount;
-//	}
-//	End of insert resume
-	
-	
-//	Update a user's resume
 	public boolean updateResume(User resume) {
 		boolean rowCount = false;
 
@@ -620,10 +535,7 @@ public class PostDAO {
 
 		return rowCount;
 	}
-//	End of updating user resume
-
 	
-//	Retrieval of a certain job post through its ID
 	public JobPosts selectJob(int id) {
 		JobPosts jobpost = null;
 		try (Connection conn = getConnection();

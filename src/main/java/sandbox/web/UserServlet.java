@@ -1039,6 +1039,7 @@ public class UserServlet extends HttpServlet {
 //		Contact userContactFinal = new Contact(email, cnumber, specificAddress, district, barangay);
 //		UserLogin user = (UserLogin) request.getAttribute("user");
 //	    Contact userContact = (Contact) request.getAttribute("userContact");
+
         boolean reg = postDAO.registerFinal(user, userContact); //intialize resume
 		boolean icon = postDAO.uploadImage(fileContent, userContact);
 		System.out.println(userContact);

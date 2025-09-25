@@ -20,35 +20,6 @@ public class UserDAO {
 		return HerokuDatabaseConfig.getConnection();
 	}
 
-	
-//	This should be in searchDAO? nvm not used as of Jan 14 14:51
-//	public List<User> selectAllUsersSearch() throws SQLException {
-//		List<User> users = new ArrayList<>();
-//		String SELECT_ALL_USERS = "SELECT * FROM Users";
-//		try (Connection conn = getConnection();
-//				PreparedStatement preparedStatement = conn.prepareStatement(SELECT_ALL_USERS)) {
-//
-//			ResultSet rs = preparedStatement.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String fname = rs.getString("first_name");
-//				String lname = rs.getString("lastname");
-//				String district = rs.getString("district");
-//				String barangay = rs.getString("barangay");
-//				String bio = rs.getString("bio");
-//				String icon = rs.getString("icon");
-//
-//				users.add(new User(id, fname, lname, district, barangay, bio, icon));
-//			}
-//		}
-//		return users;
-//
-//	}
-	
-	
-//	wait what? what is this for? But we are selecting all companies this is probably a duplicate
-//	class method, i am really confused (its not a search query though, just gets every company)
 	public List<Company> selectAllCompaniesSearch() throws SQLException {
 		List<Company> company = new ArrayList<>();
 		String SELECT_ALL_COMPANIES = "SELECT * FROM Company";
@@ -81,78 +52,6 @@ public class UserDAO {
 		return company;
 
 	}
-
-	
-//	WHAT
-//	selects every user (by id) in a certain post, then through user id, retrieves their data
-//	probably used to display all applicants
-//	public List<User> selectAllUsers(int postId) {
-//		List<User> users = new ArrayList<>();
-//		String SELECT_ALL_USERS_APP = "SELECT * FROM Applications WHERE post_Id = ?";
-//		String SELECT_USER_INFO = "SELECT * FROM Users WHERE user_id = ?";
-//		String SELECT_RESUME_INFO = "SELECT * FROM Resume WHERE user_Id = ?";
-//
-//	
-//
-//		try (Connection conn = getConnection();
-//				PreparedStatement preparedStatement = conn.prepareStatement(SELECT_ALL_USERS_APP)) {
-//
-//			preparedStatement.setInt(1, postId);
-//			ResultSet rs = preparedStatement.executeQuery();
-//
-//			while (rs.next()) {
-//				int userId = rs.getInt("user_id");
-//
-//				try (PreparedStatement preparedStatement2 = conn.prepareStatement(SELECT_USER_INFO)) {
-//					preparedStatement2.setInt(1, userId);
-//					ResultSet rs2 = preparedStatement2.executeQuery();
-//
-//					if (rs2.next()) {
-//						String fname = rs2.getString("first_name");
-//						String lname = rs2.getString("last_name");
-//						int contactId = rs2.getInt("contact_id"); // make a contact id thing
-//						String specific_address = null;
-//						String district = null;
-//						String barangay = null;
-//						String cnumber = null;
-////						String district = rs2.getString("district");
-////						String barangay = rs2.getString("barangay");
-//						
-//						try(PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CONTACT WHERE contact_id = ?");){
-//							stmt.setInt(1, contactId);
-//							ResultSet rsC = stmt.executeQuery();
-//									
-//							if(rsC.next()) {
-//								specific_address = rsC.getString("specific_address");
-//								district = rsC.getString("district");
-//								barangay = rsC.getString("barangay");
-//								cnumber = rsC.getString("contact_number");
-//								
-//							}
-//						}
-//
-////						try (PreparedStatement preparedStatement3 = conn.prepareStatement(SELECT_RESUME_INFO)) {
-////							preparedStatement3.setInt(1, userId);
-////							ResultSet rs3 = preparedStatement3.executeQuery();
-////
-////							if (rs3.next()) {
-////								String address = rs3.getString("address");
-////								String workhist = rs3.getString("workhist");
-////								String educhist = rs3.getString("educhist");
-////								String skills = rs3.getString("skills");
-////								String resdesc = rs3.getString("resdesc");
-//
-//								users.add(new User(userId, fname, lname, cnumber, specific_address, district, barangay));
-//							}
-//				}
-//					
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		return users;
-//	}
-//}
 
 	public List<User> selectAllUsers(int postId) {
 	    List<User> users = new ArrayList<>();
