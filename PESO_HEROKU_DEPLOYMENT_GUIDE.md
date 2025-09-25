@@ -59,6 +59,7 @@ heroku pg:psql --app peso-jobs-app < postgresql_setup.sql
 ```
 
 This script includes:
+
 - Complete table structure with proper relationships
 - Philippine-localized sample data (districts, barangays, companies)
 - Performance indexes and views
