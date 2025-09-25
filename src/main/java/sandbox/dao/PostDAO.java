@@ -1,10 +1,7 @@
 package sandbox.dao;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +21,7 @@ import sandbox.model.User;
 import sandbox.model.UserLogin;
 import sandbox.model.WorkHist;
 import sandbox.config.HerokuDatabaseConfig;
+import sandbox.service.ImageUploadService;
 
 public class PostDAO {
 	
@@ -113,13 +111,6 @@ public class PostDAO {
 	    int rowCount = 0;
 	    int contactId = 0;
 
-	    // Define the directory where images will be saved
-	    String imageDirectory = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your desired path
-	    File fileSaveDir = new File(imageDirectory);
-	    if (!fileSaveDir.exists()) {
-	        fileSaveDir.mkdirs(); // Create the directory if it doesn't exist
-	    }
-
 	    try (Connection conn = getConnection();
 	         PreparedStatement stmt = conn.prepareStatement("SELECT contact_id FROM contact WHERE email = ?")) {
 	        stmt.setString(1, userContact.getEmail());
@@ -127,26 +118,20 @@ public class PostDAO {
 	            if (rs.next()) {
 	                contactId = rs.getInt("contact_id");
 
-	                // Generate a unique file name for the image
-	                String uniqueFileName = "user_" + contactId + "_" + System.currentTimeMillis() + ".jpg";
-	                String imagePath = imageDirectory + File.separator + uniqueFileName;
-
-	                // Save the image to the filesystem
-	                try (OutputStream outputStream = new FileOutputStream(imagePath)) {
-	                    byte[] buffer = new byte[8192]; // 8KB buffer
-	                    int bytesRead;
-	                    while ((bytesRead = fileContent.read(buffer)) != -1) {
-	                        outputStream.write(buffer, 0, bytesRead);
+	                // Upload image to Cloudinary
+	                String imageUrl = ImageUploadService.uploadUserImage(fileContent, contactId);
+	                
+	                if (imageUrl != null) {
+	                    // Save the Cloudinary URL to the database
+	                    try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET icon = ? WHERE contact_id = ?")) {
+	                        stmt2.setString(1, imageUrl); // Save the Cloudinary URL
+	                        stmt2.setInt(2, contactId);
+	                        rowCount = stmt2.executeUpdate();
+	                    } catch (SQLException e) {
+	                        e.printStackTrace();
 	                    }
-	                }
-
-	                // Save the image file name (or path) to the database
-	                try (PreparedStatement stmt2 = conn.prepareStatement("UPDATE users SET icon = ? WHERE contact_id = ?")) {
-	                    stmt2.setString(1, uniqueFileName); // Save the file name, not the binary data
-	                    stmt2.setInt(2, contactId);
-	                    rowCount = stmt2.executeUpdate();
-	                } catch (SQLException e) {
-	                    e.printStackTrace();
+	                } else {
+	                    System.err.println("Failed to upload image to Cloudinary for user: " + contactId);
 	                }
 	            }
 	        }
@@ -160,34 +145,22 @@ public class PostDAO {
 	public boolean uploadImageCompany(InputStream fileContent, int contactId) throws IOException {
 	    int rowCount = 0;
 
-	    // Define the directory where images will be saved
-	    String imageDirectory = "C:\\Users\\johnp\\eclipse-workspace-new\\jobapplication-oracle-project\\src\\main\\webapp\\images"; // Replace with your desired path
-	    File fileSaveDir = new File(imageDirectory);
-	    if (!fileSaveDir.exists()) {
-	        fileSaveDir.mkdirs(); // Create the directory if it doesn't exist
+	    // Upload image to Cloudinary
+	    String imageUrl = ImageUploadService.uploadCompanyImage(fileContent, contactId);
+	    
+	    if (imageUrl != null) {
+	        // Save the Cloudinary URL to the database
+	        try (Connection conn = getConnection();
+	             PreparedStatement stmt2 = conn.prepareStatement("UPDATE company SET company_icon = ? WHERE contact_id = ?")) {
+	            stmt2.setString(1, imageUrl); // Save the Cloudinary URL
+	            stmt2.setInt(2, contactId);
+	            rowCount = stmt2.executeUpdate();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    } else {
+	        System.err.println("Failed to upload company image to Cloudinary for company: " + contactId);
 	    }
-	                // Generate a unique file name for the image
-	                String uniqueFileName = "company_" + contactId + "_" + System.currentTimeMillis() + ".jpg";
-	                String imagePath = imageDirectory + File.separator + uniqueFileName;
-
-	                // Save the image to the filesystem
-	                try (OutputStream outputStream = new FileOutputStream(imagePath)) {
-	                    byte[] buffer = new byte[8192]; // 8KB buffer
-	                    int bytesRead;
-	                    while ((bytesRead = fileContent.read(buffer)) != -1) {
-	                        outputStream.write(buffer, 0, bytesRead);
-	                    }
-	                }
-
-	                // Save the image file name (or path) to the database
-	                try (Connection conn = getConnection();
-	                		PreparedStatement stmt2 = conn.prepareStatement("UPDATE company SET company_icon = ? WHERE contact_id = ?")) {
-	                    stmt2.setString(1, uniqueFileName); // Save the file name, not the binary data
-	                    stmt2.setInt(2, contactId);
-	                    rowCount = stmt2.executeUpdate();
-	                } catch (SQLException e) {
-	                    e.printStackTrace();
-	                }
 
 	    return rowCount > 0;
 	}
