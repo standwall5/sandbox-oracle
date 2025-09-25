@@ -1,14 +1,13 @@
 package sandbox.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
+
 import sandbox.model.Company;
 import sandbox.model.Education;
 import sandbox.model.JobPosts;
@@ -16,24 +15,12 @@ import sandbox.model.Skills;
 import sandbox.model.User;
 import sandbox.model.UserEdit;
 import sandbox.model.WorkHist;
+import sandbox.config.HerokuDatabaseConfig;
 
 public class HistDAO {
-	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
-	private static final String jdbcUsername = "postgres";
-	private static final String jdbcPassword = "pgLarry1!";
-	private static final String jdbcDriver = "org.postgresql.Driver";
 
 	protected Connection getConnection() throws SQLException{
-		Connection conn = null;
-		try {
-			Class.forName(jdbcDriver);
-			conn = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("PostgreSQL JDBC Driver not found", e);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return conn;
+		return HerokuDatabaseConfig.getConnection();
 	}
 	
 	public int getCompanyIdByPost(int postId) throws SQLException {
