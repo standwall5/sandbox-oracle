@@ -18,25 +18,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import sandbox.model.UserLogin;
+import sandbox.config.HerokuDatabaseConfig;
 
 /**
  * Servlet implementation class LoginServlet
  */
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	// PostgreSQL connection details
-	private static final String jdbcURL = "jdbc:postgresql://localhost:5432/sandbox-application";
-	private static final String jdbcUsername = "postgres";
-	private static final String jdbcPassword = "pgLarry1!";
 	
 	private Connection getConnection() throws SQLException {
-		try {
-			Class.forName("org.postgresql.Driver");
-			return DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-		} catch (ClassNotFoundException e) {
-			throw new SQLException("PostgreSQL Driver not found", e);
-		}
+		return HerokuDatabaseConfig.getConnection();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
