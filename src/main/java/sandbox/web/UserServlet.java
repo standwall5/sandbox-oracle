@@ -1376,18 +1376,17 @@ public class UserServlet extends HttpServlet {
 	
 	
 	private void getImage(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	HttpSession session = request.getSession();
 	int userId = (int) session.getAttribute("userId"); // Get user ID from request
-    String imageFileName = null;
+    String imageUrl = null;
 
-    // Get the image file name from the database
+    // Get the image URL from the database (now contains Cloudinary URLs)
     try (Connection conn = getConnection();
          PreparedStatement stmt = conn.prepareStatement("SELECT icon FROM users WHERE user_id = ?")) {
         stmt.setInt(1, userId);
         try (ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
-                imageFileName = rs.getString("icon");
+                imageUrl = rs.getString("icon");
             }
         }
     } catch (SQLException e) {
@@ -1396,24 +1395,15 @@ public class UserServlet extends HttpServlet {
         return;
     }
 
-    if (imageFileName != null) {
-        File imageFile = new File(IMAGE_DIRECTORY + File.separator + imageFileName);
-
-        if (imageFile.exists()) {
-            // Set the content type based on the file extension (e.g., image/jpeg)
-            response.setContentType(getServletContext().getMimeType(imageFile.getName()));
-
-            try (InputStream fileInputStream = new FileInputStream(imageFile);
-                 OutputStream responseOutputStream = response.getOutputStream()) {
-                byte[] buffer = new byte[8192]; // 8KB buffer
-                int bytesRead;
-                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                    responseOutputStream.write(buffer, 0, bytesRead);
-                }
-            }
+    if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+        // Check if it's a Cloudinary URL or legacy local filename
+        if (imageUrl.startsWith("http")) {
+            // It's a Cloudinary URL - redirect to it
+            response.sendRedirect(imageUrl);
         } else {
+            // Legacy local filename - return default image or not found
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("Image not found.");
+            response.getWriter().write("Legacy image file not supported. Please re-upload your profile image.");
         }
     } else {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -1423,18 +1413,17 @@ public class UserServlet extends HttpServlet {
 }
 	
 	private void getImageCompany(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	HttpSession session = request.getSession();
-	int companyId = (int) session.getAttribute("companyId"); // Get user ID from request
-   String imageFileName = null;
+	int companyId = (int) session.getAttribute("companyId"); // Get company ID from session
+   String imageUrl = null;
 
-   // Get the image file name from the database
+   // Get the image URL from the database (now contains Cloudinary URLs)
    try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT company_icon FROM company WHERE company_id = ?")) {
        stmt.setInt(1, companyId);
        try (ResultSet rs = stmt.executeQuery()) {
            if (rs.next()) {
-               imageFileName = rs.getString("company_icon");
+               imageUrl = rs.getString("company_icon");
            }
        }
    } catch (SQLException e) {
@@ -1443,45 +1432,34 @@ public class UserServlet extends HttpServlet {
        return;
    }
 
-   if (imageFileName != null) {
-       File imageFile = new File(IMAGE_DIRECTORY + File.separator + imageFileName);
-
-       if (imageFile.exists()) {
-           // Set the content type based on the file extension (e.g., image/jpeg)
-           response.setContentType(getServletContext().getMimeType(imageFile.getName()));
-
-           try (InputStream fileInputStream = new FileInputStream(imageFile);
-                OutputStream responseOutputStream = response.getOutputStream()) {
-               byte[] buffer = new byte[8192]; // 8KB buffer
-               int bytesRead;
-               while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                   responseOutputStream.write(buffer, 0, bytesRead);
-               }
-           }
+   if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+       // Check if it's a Cloudinary URL or legacy local filename
+       if (imageUrl.startsWith("http")) {
+           // It's a Cloudinary URL - redirect to it
+           response.sendRedirect(imageUrl);
        } else {
+           // Legacy local filename - return default image or not found
            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-           response.getWriter().write("Image not found.");
+           response.getWriter().write("Legacy image file not supported. Please re-upload your company logo.");
        }
    } else {
        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-       response.getWriter().write("No image associated with this user.");
+       response.getWriter().write("No image associated with this company.");
    }
 
 }
 	
 	private void getImageCompanyResult(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		// TODO Auto-generated method stub
-		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
-			int userId = Integer.parseInt(request.getParameter("id")); // Get user ID from request
-		   String imageFileName = null;
+		int companyId = Integer.parseInt(request.getParameter("id")); // Get company ID from request parameter
+		   String imageUrl = null;
 
-		   // Get the image file name from the database
+		   // Get the image URL from the database (now contains Cloudinary URLs)
 		   try (Connection conn = getConnection();
 		        PreparedStatement stmt = conn.prepareStatement("SELECT company_icon FROM company WHERE company_id = ?")) {
-		       stmt.setInt(1, userId);
+		       stmt.setInt(1, companyId);
 		       try (ResultSet rs = stmt.executeQuery()) {
 		           if (rs.next()) {
-		               imageFileName = rs.getString("company_icon");
+		               imageUrl = rs.getString("company_icon");
 		           }
 		       }
 		   } catch (SQLException e) {
@@ -1490,44 +1468,34 @@ public class UserServlet extends HttpServlet {
 		       return;
 		   }
 
-		   if (imageFileName != null) {
-		       File imageFile = new File(IMAGE_DIRECTORY + File.separator + imageFileName);
-
-		       if (imageFile.exists()) {
-		           // Set the content type based on the file extension (e.g., image/jpeg)
-		           response.setContentType(getServletContext().getMimeType(imageFile.getName()));
-
-		           try (InputStream fileInputStream = new FileInputStream(imageFile);
-		                OutputStream responseOutputStream = response.getOutputStream()) {
-		               byte[] buffer = new byte[8192]; // 8KB buffer
-		               int bytesRead;
-		               while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-		                   responseOutputStream.write(buffer, 0, bytesRead);
-		               }
-		           }
+		   if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+		       // Check if it's a Cloudinary URL or legacy local filename
+		       if (imageUrl.startsWith("http")) {
+		           // It's a Cloudinary URL - redirect to it
+		           response.sendRedirect(imageUrl);
 		       } else {
+		           // Legacy local filename - return default image or not found
 		           response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		           response.getWriter().write("Image not found.");
+		           response.getWriter().write("Legacy image file not supported. Please re-upload your company logo.");
 		       }
 		   } else {
 		       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		       response.getWriter().write("No image associated with this user.");
+		       response.getWriter().write("No image associated with this company.");
 		   }
 	}
 	
 	
 	private void getImageResult(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException {
-		 String IMAGE_DIRECTORY = getServletContext().getRealPath("/images"); // Use servlet context path
 	int userId = Integer.parseInt(request.getParameter("id")); // Get user ID from request
-   String imageFileName = null;
+   String imageUrl = null;
 
-   // Get the image file name from the database
+   // Get the image URL from the database (now contains Cloudinary URLs)
    try (Connection conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement("SELECT icon FROM users WHERE user_id = ?")) {
        stmt.setInt(1, userId);
        try (ResultSet rs = stmt.executeQuery()) {
            if (rs.next()) {
-               imageFileName = rs.getString("icon");
+               imageUrl = rs.getString("icon");
            }
        }
    } catch (SQLException e) {
@@ -1536,24 +1504,15 @@ public class UserServlet extends HttpServlet {
        return;
    }
 
-   if (imageFileName != null) {
-       File imageFile = new File(IMAGE_DIRECTORY + File.separator + imageFileName);
-
-       if (imageFile.exists()) {
-           // Set the content type based on the file extension (e.g., image/jpeg)
-           response.setContentType(getServletContext().getMimeType(imageFile.getName()));
-
-           try (InputStream fileInputStream = new FileInputStream(imageFile);
-                OutputStream responseOutputStream = response.getOutputStream()) {
-               byte[] buffer = new byte[8192]; // 8KB buffer
-               int bytesRead;
-               while ((bytesRead = fileInputStream.read(buffer)) != -1) {
-                   responseOutputStream.write(buffer, 0, bytesRead);
-               }
-           }
+   if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+       // Check if it's a Cloudinary URL or legacy local filename
+       if (imageUrl.startsWith("http")) {
+           // It's a Cloudinary URL - redirect to it
+           response.sendRedirect(imageUrl);
        } else {
+           // Legacy local filename - return default image or not found
            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-           response.getWriter().write("Image not found.");
+           response.getWriter().write("Legacy image file not supported. Please re-upload your profile image.");
        }
    } else {
        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
