@@ -52,11 +52,17 @@ This will show your `DATABASE_URL` which your app will automatically use.
 
 ### 5. Initialize the Database Schema
 
-After deployment, you'll need to run the database setup script. You can do this via Heroku CLI:
+After deployment, you'll need to run the database setup script using your existing comprehensive schema. You can do this via Heroku CLI:
 
 ```bash
-heroku pg:psql --app peso-jobs-app < heroku_database_setup.sql
+heroku pg:psql --app peso-jobs-app < postgresql_setup.sql
 ```
+
+This script includes:
+- Complete table structure with proper relationships
+- Philippine-localized sample data (districts, barangays, companies)
+- Performance indexes and views
+- Realistic user profiles and job postings
 
 ### 6. Commit All Changes to Git
 
